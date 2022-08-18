@@ -15,7 +15,7 @@ import { SpriteRef } from '../@core/Sprite';
 import useGameLoop from '../@core/useGameLoop';
 import useGameObject from '../@core/useGameObject';
 import useGameObjectEvent from '../@core/useGameObjectEvent';
-import soundData from '../soundData';
+// import soundData from '../soundData';
 import spriteData from '../spriteData';
 
 interface Props {
@@ -94,7 +94,7 @@ export default function CharacterScript({ children }: Props) {
                         offset={{ x: 0, y: characterOffsetY }}
                         onIteration={() => removeInstance()}
                     />
-                    <Sound {...soundData.footstep} />
+                    {/* <Sound {...soundData.footstep} /> */}
                 </GameObject>
             );
         },

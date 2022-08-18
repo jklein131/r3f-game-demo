@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import Interact from '../components/Interact';
 import Collider from '../@core/Collider';
 import GameObject, { GameObjectProps } from '../@core/GameObject';
 import Interactable, { InteractionEvent } from '../@core/Interactable';
@@ -16,9 +17,9 @@ function WorkstationScript() {
         workState.current = !workState.current;
 
         if (workState.current) {
-            getComponent<SpriteRef>('Sprite').setState('workstation-2');
+            getComponent<SpriteRef>('workstation').setState('workstation-2');
         } else {
-            getComponent<SpriteRef>('Sprite').setState('workstation-1');
+            getComponent<SpriteRef>('workstation').setState('workstation-1');
         }
 
         return waitForMs(400);
@@ -30,9 +31,10 @@ function WorkstationScript() {
 export default function Workstation(props: GameObjectProps) {
     return (
         <GameObject {...props}>
-            <Sprite {...spriteData.objects} state="workstation-1" />
+            <Interact />
+            <Sprite name="workstation" {...spriteData.objects} state="workstation-1" />
             <Collider />
-            <Interactable />
+
             <WorkstationScript />
         </GameObject>
     );

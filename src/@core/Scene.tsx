@@ -6,6 +6,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
+import Typist from 'react-typist';
 import { createPortal } from 'react-three-fiber';
 import useGame from './useGame';
 import useSceneManager from './useSceneManager';

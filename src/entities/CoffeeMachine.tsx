@@ -28,7 +28,8 @@ function CoffeeScript() {
 export default function CoffeeMachine(props: GameObjectProps) {
     return (
         <GameObject {...props}>
-            <Sprite {...spriteData.objects} state="coffee-machine" />
+            <Sprite {...spriteData.objects} state="bigtree1" />
+            <Sprite {...spriteData.objects} state="bigtree2" offset={{ x: 0, y: 1 }} />
             <Collider />
             <Interactable />
             <CoffeeScript />

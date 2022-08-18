@@ -1,9 +1,19 @@
-import { useRef } from 'react';
+import React, {
+    Dispatch,
+    SetStateAction,
+    useState,
+    RefObject,
+    useRef,
+    ReactNode,
+} from 'react';
 import useComponentRegistry, { ComponentRef } from './useComponentRegistry';
 import useGame from './useGame';
 import useGameObject from './useGameObject';
 import { GameObjectRef, Position } from './GameObject';
 import { PubSubEvent } from './utils/createPubSub';
+import PizzaPickup from 'src/entities/PizzaPickup';
+import Sprite, { SpriteRef } from '../@core/Sprite';
+import spriteData from 'src/spriteData';
 
 export type WillInteractEvent = PubSubEvent<'will-interact', Position>;
 export type InteractionEvent = PubSubEvent<'interaction', GameObjectRef>;
@@ -21,7 +31,7 @@ export type InteractableRef = ComponentRef<
     }
 >;
 
-export default function Interactable() {
+export default function Interactable({ children }: { children?: JSX.Element }) {
     const { findGameObjectsByXY } = useGame();
     const { getRef, publish, hasSubscriptions } = useGameObject();
     const canInteract = useRef(true);

@@ -7,13 +7,13 @@ export interface ComponentRef<ComponentName = string, Api = any> {
 }
 
 export interface ComponentRegistryUtils {
-    registerComponent: <T extends ComponentRef>(name: T['name'], api: T['api']) => void;
-    unregisterComponent: <T extends ComponentRef>(name: T['name']) => void;
-    getComponent: <T extends ComponentRef>(name: T['name']) => T['api'];
+    registerComponent: <T extends ComponentRef>(name: string, api: T['api']) => void;
+    unregisterComponent: <T extends ComponentRef>(name: string) => void;
+    getComponent: <T extends ComponentRef>(name: string) => T['api'];
 }
 
 export default function useComponentRegistry<T extends ComponentRef>(
-    name: T['name'],
+    name: string,
     api: T['api']
 ) {
     const { registerComponent, unregisterComponent } = useGameObject();

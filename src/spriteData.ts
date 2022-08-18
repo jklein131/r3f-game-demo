@@ -43,6 +43,12 @@ const spriteData: { [index: string]: SpriteProps } = {
             'coffee-machine-empty': [[3, 1]],
             pizza: [[4, 1]],
             plant: [[0, 2]],
+            arrow: [[0, 3]],
+            bigtree1: [[4, 2]],
+            bigtree2: [[4, 3]],
+            midtree1: [[5, 2]],
+            midtree2: [[5, 3]],
+            smalltree: [[6, 2]],
         },
     },
     footstep: {

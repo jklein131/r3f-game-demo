@@ -46,6 +46,7 @@ export default function ScenePortal({
         target: targetProp,
         port(target = targetProp) {
             const [targetScene, targetPortal] = target.split('/');
+            console.log('start');
 
             setGameState(targetPortalKey, targetPortal);
             setGameState(portedGameObjectKey, 'player');

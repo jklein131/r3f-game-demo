@@ -14,14 +14,24 @@ import Workstation from '../entities/Workstation';
 import spriteData from '../spriteData';
 
 const mapData = mapDataString(`
-# # # # # # # # # # # # # # # # #
-# · W T # T · · W T · W · · · T #
-# · · · · · · · · · · · · · · o ·
-# o · · # · · · # # # # · · # # #
-# # # # # · · · # W o W · · T W #
-# C C C # · · · T · · · · · · · #
-# o · · · · · · · · · · · · · o #
-# # # # # # # # # # # # # # # # #
+T···················································
+T···················································
+T···················································
+············T·······································
+····················································
+····················##########······················
+····················##########······T···············
+····················##########······················
+····················##########······················
+····················####M#####······················
+········T·······················^···················
+······················P·····························
+·························W··························
+T···········T·······································
+····················································
+····T···············································
+····················································
+····················································
 `);
 
 const resolveMapTile: TileMapResolver = (type, x, y) => {
@@ -37,6 +47,13 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
     switch (type) {
         case '·':
             return floor;
+        case '^':
+            return (
+                <Fragment key={key}>
+                    {floor}
+                    <CoffeeMachine {...position} />
+                </Fragment>
+            );
         case 'o':
             return (
                 <Fragment key={key}>
@@ -49,6 +66,18 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
                 <GameObject key={key} {...position} layer="wall">
                     <Collider />
                     <Sprite {...spriteData.objects} state="wall" />
+                </GameObject>
+            );
+        case 'M':
+            return (
+                <GameObject x={x} y={y}>
+                    <Collider />
+                    <Interactable />
+                    <ScenePortal
+                        name="exit"
+                        enterDirection={[0, -1]}
+                        target="other/start"
+                    />
                 </GameObject>
             );
         case 'W':
@@ -72,6 +101,14 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
                     <Plant {...position} />
                 </Fragment>
             );
+        case 'P':
+            return (
+                <Fragment key={key}>
+                    {floor}
+                    <Player x={x} y={y} />;
+                </Fragment>
+            );
+
         default:
             return null;
     }
@@ -84,12 +121,11 @@ export default function OfficeScene() {
                 <ambientLight />
                 <TileMap data={mapData} resolver={resolveMapTile} definesMapSize />
             </GameObject>
-            <GameObject x={16} y={5}>
+            {/* <GameObject x={16} y={5}>
                 <Collider />
                 <Interactable />
                 <ScenePortal name="exit" enterDirection={[-1, 0]} target="other/start" />
-            </GameObject>
-            <Player x={6} y={3} />
+            </GameObject> */}
         </>
     );
 }

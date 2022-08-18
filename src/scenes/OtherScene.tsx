@@ -10,11 +10,15 @@ import Player from '../entities/Player';
 import spriteData from '../spriteData';
 
 const mapData = mapDataString(`
-# # # # # #
-# · · · · #
-· · · · · #
-# · · · · #
-# # # # # #
+# # # # # # # # # # # # # # # # # # # # # #
+# · · · · · · · · · · · · · · · · · · · · #
+# · · · · · · · · · · · · · · · · · · · · #
+# · · · · · · · · · · · · · · · · · · · · #
+# · · · · · · · · · · · · · · · · · · · · #
+# · · · · · · · · · · · · · · · · · · · · #
+# · · · · · · · · · · · · · · · · · · · · #
+# · · · · · · · · · · · · · · · · · · · · #
+# # # P # # # # # # # # # # # # # # # # # #
 `);
 
 const resolveMapTile: TileMapResolver = (type, x, y) => {
@@ -35,6 +39,18 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
                     <Sprite {...spriteData.objects} state="wall" />
                 </GameObject>
             );
+        case 'P':
+            return (
+                <GameObject x={x} y={y}>
+                    <Collider />
+                    <Interactable />
+                    <ScenePortal
+                        name="start"
+                        enterDirection={[0, 1]}
+                        target="office/exit"
+                    />
+                </GameObject>
+            );
         default:
             return null;
     }
@@ -47,11 +63,7 @@ export default function OtherScene() {
                 <ambientLight />
                 <TileMap data={mapData} resolver={resolveMapTile} definesMapSize />
             </GameObject>
-            <GameObject x={0} y={2}>
-                <Collider />
-                <Interactable />
-                <ScenePortal name="start" enterDirection={[1, 0]} target="office/exit" />
-            </GameObject>
+
             <Player x={0} y={2} />
         </>
     );

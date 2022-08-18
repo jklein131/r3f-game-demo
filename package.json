@@ -38,7 +38,9 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-three-fiber": "^4.2.8",
+    "react-typist": "^2.0.5",
     "three": "^0.112.1",
+    "typewriter-effect": "^2.19.0",
     "zustand": "^2.2.3"
   }
 }

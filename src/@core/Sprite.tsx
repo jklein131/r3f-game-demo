@@ -17,7 +17,7 @@ export type SpriteRef = ComponentRef<
     }
 >;
 
-export type SpriteProps = GraphicProps;
+export type SpriteProps = GraphicProps & { name?: string };
 
 export default function Sprite({
     sheet,
@@ -27,6 +27,7 @@ export default function Sprite({
     opacity: initialOpacity,
     offset: initialOffset,
     scale: initialScale,
+    name: name = 'Sprite',
     ...graphicProps
 }: SpriteProps) {
     const [color, setColor] = useState(initialColor);
@@ -37,7 +38,7 @@ export default function Sprite({
     const [scale, setScale] = useState(initialScale);
     const nodeRef = useRef<THREE.Object3D>();
 
-    useComponentRegistry<SpriteRef>('Sprite', {
+    useComponentRegistry<SpriteRef>(name, {
         setColor,
         setOpacity,
         setState,

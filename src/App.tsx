@@ -10,6 +10,10 @@ import OtherScene from './scenes/OtherScene';
 import soundData from './soundData';
 import spriteData from './spriteData';
 import globalStyles from './styles/global';
+import Typist from 'react-typist';
+import useKeyPress from './@core/useKeyPress';
+import useGameLoop from './@core/useGameLoop';
+import GameUi from './@core/GameUi';
 
 const styles = {
     root: (width: number, height: number) => css`
@@ -29,10 +33,18 @@ const urls = [
 
 export default function App() {
     const [width, height] = useWindowSize();
-
+    const [showTypingDone, setShowTypingDone] = React.useState(false);
+    const [text, setText] = React.useState('Hi Stranger! Fancy seeing you here!');
+    // const spaceKey = useKeyPress('t');
+    // useGameLoop(() => {
+    //     if (spaceKey && showTypingDone) {
+    //         setText('');
+    //     }
+    // });
     return (
         <>
             <Global styles={globalStyles} />
+
             <div css={styles.root(width, height)}>
                 <Game cameraZoom={80}>
                     <AssetLoader urls={urls} placeholder="Loading assets ...">
