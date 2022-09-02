@@ -34,6 +34,7 @@ export const GameContext = React.createContext<GameContextValue>(null);
 
 interface Props extends Partial<GameContextValue['settings']> {
     children: React.ReactNode;
+    pubSub: ReturnType<typeof createPubSub>;
 }
 
 const styles = {
@@ -49,6 +50,7 @@ export default function Game({
     movementDuration = 250,
     cameraZoom = 64,
     children,
+    pubSub,
 }: Props) {
     const [paused, setPaused] = useState(false);
     const [mapSize, setMapSize] = useState<[number, number]>(() => [1, 1]);
@@ -58,7 +60,7 @@ export default function Game({
     const [registryByLayer] = useState<GameObjectRegistry<GameObjectRef[]>>(
         () => new Map()
     );
-    const [pubSub] = useState(() => createPubSub());
+
     const [gameStore] = useState(() => new Map<string | symbol, any>());
 
     const storeUtils = useMemo(

@@ -5,6 +5,7 @@ import React, {
     RefObject,
     useRef,
     ReactNode,
+    useEffect,
 } from 'react';
 import useComponentRegistry, { ComponentRef } from './useComponentRegistry';
 import useGame from './useGame';
@@ -14,6 +15,14 @@ import { PubSubEvent } from './utils/createPubSub';
 import PizzaPickup from 'src/entities/PizzaPickup';
 import Sprite, { SpriteRef } from '../@core/Sprite';
 import spriteData from 'src/spriteData';
+import {
+    Notification,
+    NotificationEvent,
+    NotificationType,
+    UnNotificationEvent,
+} from './Notifications';
+import { MovingEvent } from './Moveable';
+import useGameObjectEvent from './useGameObjectEvent';
 
 export type WillInteractEvent = PubSubEvent<'will-interact', Position>;
 export type InteractionEvent = PubSubEvent<'interaction', GameObjectRef>;
@@ -32,10 +41,21 @@ export type InteractableRef = ComponentRef<
 >;
 
 export default function Interactable({ children }: { children?: JSX.Element }) {
-    const { findGameObjectsByXY } = useGame();
-    const { getRef, publish, hasSubscriptions } = useGameObject();
-    const canInteract = useRef(true);
+    const { findGameObjectsByXY, publish: gameLevelPublish } = useGame();
+    const { getRef, publish, hasSubscriptions, subscribe } = useGameObject();
 
+    const message = {
+        id: 'old-man-jenkins',
+        action: () => {},
+        text: 'Hello Brother',
+        title: 'Can i have some cheese',
+        type: NotificationType.TALKABLE,
+    } as Notification;
+
+    const canInteract = useRef(true);
+    useGameObjectEvent('moving', an => {
+        gameLevelPublish<UnNotificationEvent>('unnotification', message);
+    });
     useComponentRegistry<InteractableRef>('Interactable', {
         // this is executed on the game object that *initiates* an interaction
         async interact({ x, y }) {
@@ -54,7 +74,9 @@ export default function Interactable({ children }: { children?: JSX.Element }) {
         },
         // this is executed on the game object that *receives* an interaction
         async onInteract(gameObject) {
+            gameLevelPublish<NotificationEvent>('notification', message);
             if (canInteract.current) {
+                console.log('obj', gameObject);
                 canInteract.current = false;
                 publish<WillInteractEvent>('will-interact', gameObject.transform);
                 await publish<InteractionEvent>('interaction', gameObject);

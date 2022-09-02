@@ -1,5 +1,5 @@
 import { css, Global } from '@emotion/core';
-import React from 'react';
+import React, { useState, Fragment } from 'react';
 import AssetLoader from './@core/AssetLoader';
 import Game from './@core/Game';
 import Scene from './@core/Scene';
@@ -14,6 +14,13 @@ import Typist from 'react-typist';
 import useKeyPress from './@core/useKeyPress';
 import useGameLoop from './@core/useGameLoop';
 import GameUi from './@core/GameUi';
+import DialogBox from './components/DialogBox';
+import { Transition } from '@headlessui/react';
+import { CheckCircleIcon } from '@heroicons/react/outline';
+import { XIcon } from '@heroicons/react/solid';
+import { NotificationWindow } from './@core/Notifications';
+import createPubSub from './@core/utils/createPubSub';
+import TreeSelector from './@core/TreeSelector';
 
 const styles = {
     root: (width: number, height: number) => css`
@@ -41,12 +48,23 @@ export default function App() {
     //         setText('');
     //     }
     // });
+    const [pubSub] = useState(() => createPubSub());
     return (
         <>
             <Global styles={globalStyles} />
+            <TreeSelector />
 
+            <NotificationWindow pubSub={pubSub} />
             <div css={styles.root(width, height)}>
-                <Game cameraZoom={80}>
+                {/* <DialogBox
+                    messages={['hellpo', 'josh']}
+                    characterName="Josh"
+                    onDialogEnded={() => {}}
+                    screenHeight={height}
+                    screenWidth={width}
+                /> */}
+
+                <Game cameraZoom={80} pubSub={pubSub}>
                     <AssetLoader urls={urls} placeholder="Loading assets ...">
                         <SceneManager defaultScene="office">
                             <Scene id="office">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-three-fiber';
+import Plant from '../entities/Plant';
 import { Position } from '../@core/GameObject';
 import Graphic from '../@core/Graphic';
 import useGameObject from '../@core/useGameObject';
@@ -75,6 +76,7 @@ export default function PlayerPathOverlay({
                             opacity={pathVisible ? 1 : 0.5}
                             basic
                         />
+                        <Plant />
                     </group>
                 </>,
                 nodeRef.current.parent
