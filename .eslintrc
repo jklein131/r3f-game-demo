@@ -1,0 +1,70 @@
+{ 
+    "extends": ["next/babel","next/core-web-vitals"],
+    "parser": "/Users/joshuaklein/go/src/github.com/jklein131/r3f-game-demo/node_modules/@typescript-eslint/parser/dist/parser.js",
+    "env": {
+        "browser": true,
+        "es6": true,
+        "jest": true
+    },
+    "settings": {
+        "import/extensions": [
+            ".js",
+            ".jsx",
+            ".ts",
+            ".d.ts",
+            ".tsx"
+        ]
+    },
+    "rules": {
+        "no-console": "warn",
+        "arrow-body-style": "off",
+        "prefer-arrow-callback": "off",
+        "import/no-extraneous-dependencies": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-unused-vars": "off",
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
+        "react/prop-types": "warn",
+        "react/prefer-stateless-function": "warn",
+        "react/sort-comp": "off",
+        "react/require-default-props": "off",
+        "react/jsx-indent": [
+            "warn",
+            4
+        ],
+        "react/jsx-indent-props": [
+            "warn",
+            4
+        ],
+        "react/jsx-filename-extension": "off",
+        "react/jsx-one-expression-per-line": "off",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "no-alert": "off",
+        "no-unused-expressions": "off",
+        "no-param-reassign": "off",
+        "no-await-in-loop": "off",
+        "no-restricted-syntax": "off",
+        "no-use-before-define": "off",
+        "no-continue": "off",
+        "no-plusplus": "off",
+        "no-bitwise": "off",
+        "no-debugger": "warn",
+        "import/order": "warn",
+        "import/prefer-default-export": "off",
+        "react/destructuring-assignment": "off",
+        "react/no-array-index-key": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/interactive-supports-focus": "off",
+        "@typescript-eslint/ban-ts-ignore": "off",
+        "@typescript-eslint/no-namespace": "off"
+    },
+    "parserOptions": {
+        "project": "/Users/joshuaklein/go/src/github.com/jklein131/r3f-game-demo/tsconfig.json"
+    },
+    "plugins": [
+        "@typescript-eslint/eslint-plugin",
+        "eslint-plugin-react-hooks"
+    ]
+}

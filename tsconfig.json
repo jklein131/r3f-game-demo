@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "outDir": "build",
+    "baseUrl": "/Users/joshuaklein/go/src/github.com/jklein131/r3f-game-demo",
+    "sourceMap": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "types": ["@emotion/react/types/css-prop"], 
+    "target": "es5",
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "downlevelIteration": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    // "node_modules"
+  ]
+}
