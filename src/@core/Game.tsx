@@ -1,4 +1,5 @@
-import { css } from '@emotion/core';
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import { GameObjectLayer, GameObjectRef } from './GameObject';

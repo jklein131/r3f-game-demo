@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import Typist from 'react-typist';
 import useGameLoop from '../@core/useGameLoop';
 import Collider from '../@core/Collider';
 import GameObject, { GameObjectProps } from '../@core/GameObject';

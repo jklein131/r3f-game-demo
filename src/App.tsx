@@ -1,4 +1,5 @@
-import { css, Global } from '@emotion/core';
+/** @jsxImportSource @emotion/react */
+import { css, Global } from '@emotion/react';
 import React, { useState, Fragment } from 'react';
 import AssetLoader from './@core/AssetLoader';
 import Game from './@core/Game';
@@ -10,14 +11,6 @@ import OtherScene from './scenes/OtherScene';
 import soundData from './soundData';
 import spriteData from './spriteData';
 import globalStyles from './styles/global';
-import Typist from 'react-typist';
-import useKeyPress from './@core/useKeyPress';
-import useGameLoop from './@core/useGameLoop';
-import GameUi from './@core/GameUi';
-import DialogBox from './components/DialogBox';
-import { Transition } from '@headlessui/react';
-import { CheckCircleIcon } from '@heroicons/react/outline';
-import { XIcon } from '@heroicons/react/solid';
 import { NotificationWindow } from './@core/Notifications';
 import createPubSub from './@core/utils/createPubSub';
 import TreeSelector from './@core/TreeSelector';
@@ -55,7 +48,7 @@ export default function App() {
             <TreeSelector />
 
             <NotificationWindow pubSub={pubSub} />
-            <div css={styles.root(width, height)}>
+            <div id="swag" css={styles.root(width, height)}>
                 {/* <DialogBox
                     messages={['hellpo', 'josh']}
                     characterName="Josh"

@@ -30,7 +30,7 @@ export const characterOffsetY = 0.25;
  * when the character is moving.
  * It also applies a breathe animation when the character is standing still.
  */
-
+import * as THREE from 'three';
 export default function CharacterScript({ children }: Props) {
     const { transform, getComponent } = useGameObject();
     const { instantiate } = useScene();

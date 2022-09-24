@@ -6,7 +6,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import Typist from 'react-typist';
+import * as THREE from 'three';
 import { createPortal } from 'react-three-fiber';
 import useGame from './useGame';
 import useSceneManager from './useSceneManager';
@@ -55,13 +55,8 @@ const sceneReadyTimeout = 1000;
 
 export default function Scene({ id, children }: Props) {
     const { publish } = useGame();
-    const {
-        currentScene,
-        currentLevel,
-        prevLevel,
-        resetScene,
-        setLevel,
-    } = useSceneManager();
+    const { currentScene, currentLevel, prevLevel, resetScene, setLevel } =
+        useSceneManager();
     const [instances, setInstances] = useState<React.ReactElement[]>([]);
     const idleCallback = useRef();
 
