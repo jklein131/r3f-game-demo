@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-three-fiber';
 import Plant from '../entities/Plant';
+import { PlantableRef } from './Plantable';
 import { Position } from '../@core/GameObject';
 import Graphic from '../@core/Graphic';
 import useGameObject from '../@core/useGameObject';
 import usePathfinding from '../@core/usePathfinding';
 import spriteData from '../spriteData';
+import useGame from '../@core/useGame';
+import { CompressedPixelFormat } from 'three';
 
 interface Props {
     path: Position[];
     pathVisible: boolean;
     pointer: Position;
+    plantTree: boolean;
     hasTarget?: boolean;
 }
 
@@ -20,11 +24,13 @@ export default function PlayerPathOverlay({
     path,
     pathVisible,
     pointer,
+    plantTree,
     hasTarget = false,
 }: Props) {
     const { transform, nodeRef } = useGameObject();
     const findPath = usePathfinding();
     const [pointerPath, setPointerPath] = useState([]);
+    const { findGameObjectsByXY } = useGame();
 
     // update on pointer change
     useEffect(() => {
@@ -40,6 +46,16 @@ export default function PlayerPathOverlay({
 
     let renderedPath = null;
 
+    let isPlantable = false;
+    if (
+        path.length > 0 &&
+        plantTree &&
+        findGameObjectsByXY(path[path.length - 1].x, path[path.length - 1].y).filter(
+            gameObj => gameObj.getComponent<PlantableRef>('plantable')?.isPlantable
+        )
+    ) {
+        isPlantable = true;
+    }
     if (pathVisible) {
         renderedPath = path.length
             ? path.map(({ x, y }, index) => (
@@ -76,8 +92,19 @@ export default function PlayerPathOverlay({
                             opacity={pathVisible ? 1 : 0.5}
                             basic
                         />
-                        <Plant />
                     </group>
+                    {isPlantable && path.length > 0 && (
+                        <group
+                            position={[
+                                path[path.length - 1].x,
+                                path[path.length - 1].y,
+                                offsetZ,
+                            ]}
+                        >
+                            <Plant />
+                            {/* This should be replaced by a tree outline. */}
+                        </group>
+                    )}
                 </>,
                 nodeRef.current.parent
             )}

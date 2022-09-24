@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import spriteData from 'src/spriteData';
 import { Position } from '../@core/GameObject';
-import { InteractableRef } from '../@core/Interactable';
+import { InteractableRef, InteractableRightClickRef } from '../@core/Interactable';
 import { MoveableRef } from '../@core/Moveable';
 import useCollisionTest from '../@core/useCollisionTest';
 import useGameLoop from '../@core/useGameLoop';
@@ -16,7 +17,10 @@ export default function PlayerScript() {
     const { getComponent, transform } = useGameObject();
     const testCollision = useCollisionTest();
     const findPath = usePathfinding();
-    const [path, setPath] = useState<Position[]>([]);
+    const [path, setPath] = useState<{ path: Position[]; rightClick: boolean }>({
+        path: [],
+        rightClick: false,
+    });
     const [pathOverlayEnabled, setPathOverlayEnabled] = useState(true);
 
     // key controls
@@ -47,7 +51,7 @@ export default function PlayerScript() {
                 : true;
 
         if (canCross) {
-            setPath([nextPosition]);
+            setPath({ ...path, path: [nextPosition] });
             setPathOverlayEnabled(false);
         }
     });
@@ -56,47 +60,74 @@ export default function PlayerScript() {
     const pointer = usePointer();
 
     usePointerClick(event => {
+        // console.log('e', event);
+        // left click
         if (event.button === 0) {
             try {
                 const nextPath = findPath({ to: pointer });
-                if (path.length > 0) {
+                if (path.path.length > 0) {
                     nextPath.unshift(transform);
                 }
-                setPath(nextPath);
+                setPath({ ...path, path: nextPath, rightClick: false });
                 setPathOverlayEnabled(true);
             } catch {
                 // pointer out of bounds
-                setPath([]);
+                setPath({ ...path, path: [] });
+            }
+        }
+
+        // right click
+        if (event.button === 2) {
+            try {
+                const nextPath = findPath({ to: pointer });
+                if (path.path.length > 0) {
+                    nextPath.unshift(transform);
+                }
+                setPath({ ...path, path: nextPath, rightClick: true });
+                setPathOverlayEnabled(true);
+                // place the tree
+            } catch {
+                // pointer out of bounds
+                setPath({ ...path, path: [] });
             }
         }
     });
 
     // walk the path
     useEffect(() => {
-        if (!path.length) return;
+        if (!path.path.length) return;
 
-        const [nextPosition] = path;
+        // console.log('path', path.rightClick, path.path);
+
+        const [nextPosition] = path.path;
 
         (async () => {
             const anyAction =
-                (await getComponent<MoveableRef>('Moveable')?.move(nextPosition)) ||
-                (path.length === 1 && // try interaction on last step of path
-                    (await getComponent<InteractableRef>('Interactable')?.interact(
-                        nextPosition
-                    )));
+                (path.path.length === 1 && // try interaction on last step of path
+                    (path.rightClick
+                        ? await getComponent<InteractableRightClickRef>(
+                              'InteractableRightClick'
+                          )?.interactRightClick(nextPosition)
+                        : await getComponent<InteractableRef>('Interactable')?.interact(
+                              nextPosition
+                          ))) ||
+                (await getComponent<MoveableRef>('Moveable')?.move(nextPosition));
 
             if (anyAction) {
                 // proceed with next step in path
-                setPath(current => current.slice(1));
+                setPath(current => ({ ...current, path: current.path.slice(1) }));
             }
         })();
     }, [path, getComponent]);
 
     return (
-        <PlayerPathOverlay
-            path={path}
-            pathVisible={pathOverlayEnabled}
-            pointer={pointer}
-        />
+        <>
+            <PlayerPathOverlay
+                path={path.path}
+                pathVisible={pathOverlayEnabled}
+                pointer={pointer}
+                plantTree={path.rightClick}
+            />
+        </>
     );
 }

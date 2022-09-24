@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import Plantable from '../components/Plantable';
 import Collider from '../@core/Collider';
 import GameObject from '../@core/GameObject';
 import Interactable from '../@core/Interactable';
@@ -24,14 +25,17 @@ const mapData = mapDataString(`
 const resolveMapTile: TileMapResolver = (type, x, y) => {
     const key = `${x}-${y}`;
     const position = { x, y };
+    const floor = (
+        <Fragment key={key}>
+            <GameObject key={key} {...position} layer="ground">
+                <Sprite {...spriteData.objects} state="floor" />
+            </GameObject>
+        </Fragment>
+    );
 
     switch (type) {
         case '·':
-            return (
-                <GameObject key={key} {...position} layer="ground">
-                    <Sprite {...spriteData.objects} state="floor" />
-                </GameObject>
-            );
+            return <>{floor}</>;
         case '#':
             return (
                 <GameObject key={key} {...position} layer="wall">

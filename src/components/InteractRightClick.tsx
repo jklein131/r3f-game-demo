@@ -3,40 +3,37 @@ import Typist from 'react-typist';
 import useGameLoop from '../@core/useGameLoop';
 import Collider from '../@core/Collider';
 import GameObject, { GameObjectProps } from '../@core/GameObject';
-import Interactable, { InteractionEvent } from '../@core/Interactable';
+import Interactable, { InteractionRightClickEvent } from '../@core/Interactable';
 import Sprite, { SpriteRef } from '../@core/Sprite';
 import useGameObject from '../@core/useGameObject';
 import useGameObjectEvent from '../@core/useGameObjectEvent';
 import waitForMs from '../@core/utils/waitForMs';
 import spriteData from '../spriteData';
 import HtmlOverlay from '../@core/HtmlOverlay';
+import { useSound } from '../@core/Sound';
+import soundData from '../soundData';
 
-export function InteractScript({ animate }: { animate: boolean }) {
-    const { getComponent } = useGameObject();
+export function InteractScriptRightClick({ fnc }: { fnc: () => void }) {
+    // const { getComponent } = useGameObject();
     const workState = useRef(false);
-    useGameLoop(time => {
-        if (animate) {
-            const pos = Math.abs((time % 1000) - 500) / 100;
-            getComponent<SpriteRef>('indicator').setOffset({ x: 0, y: pos / 100 + 0.55 });
-        }
-    });
+    const playSfx = useSound(soundData.drinking);
+    // useGameLoop(time => {
+    //     const pos = Math.abs((time % 1000) - 500) / 100;
+    //     getComponent<SpriteRef>('indicator').setOffset({ x: 0, y: pos / 100 + 0.55 });
+    // });
 
-    useGameObjectEvent<InteractionEvent>('interaction', () => {
-        workState.current = !workState.current;
-
-        if (workState.current) {
-            getComponent<SpriteRef>('indicator').setOffset({ x: -1, y: -1 });
-        } else {
-            getComponent<SpriteRef>('indicator').setOffset({ x: 1, y: 1 });
-        }
-
+    useGameObjectEvent<InteractionRightClickEvent>('interaction-right-click', () => {
+        playSfx();
+        fnc();
         return waitForMs(400);
     });
 
     return null;
 }
 
-export default function Interact(props: GameObjectProps & { showIndicator: boolean }) {
+export default function InteractRightClick(
+    props: GameObjectProps & { onRightClick: () => void }
+) {
     return (
         <>
             {/* <HtmlOverlay
@@ -61,16 +58,8 @@ export default function Interact(props: GameObjectProps & { showIndicator: boole
                 {/* {showTypingDone ? 'Press [Space] to continue' : ''} 
             </HtmlOverlay> */}
             <Interactable />
-            <InteractScript animate={props.showIndicator} />
-            {props.showIndicator && (
-                <Sprite
-                    name="indicator"
-                    {...spriteData.objects}
-                    state="arrow"
-                    scale={0.5}
-                />
-            )}
-            <Collider />
+            <InteractScriptRightClick fnc={props.onRightClick} />
+            {/* <Sprite name="indicator" {...spriteData.objects} state="arrow" scale={0.5} /> */}
         </>
     );
 }

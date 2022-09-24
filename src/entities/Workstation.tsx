@@ -31,7 +31,7 @@ function WorkstationScript() {
 export default function Workstation(props: GameObjectProps) {
     return (
         <GameObject {...props}>
-            <Interact />
+            <Interact showIndicator />
             <Sprite name="workstation" {...spriteData.objects} state="workstation-1" />
             <Collider />
 

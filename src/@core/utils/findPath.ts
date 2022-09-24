@@ -16,6 +16,8 @@ easystar.disableCornerCutting();
 easystar.enableSync();
 
 export default function findPath({ from, to, map }: PathOptions) {
+    easystar.enableCornerCutting();
+    easystar.enableDiagonals();
     easystar.setGrid(map);
     let result = [];
     try {
@@ -25,6 +27,7 @@ export default function findPath({ from, to, map }: PathOptions) {
     } catch {
         // possibly out of range
     }
+
     easystar.calculate();
     return result;
 }

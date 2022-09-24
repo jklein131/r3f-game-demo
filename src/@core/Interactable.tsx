@@ -23,10 +23,23 @@ import {
 } from './Notifications';
 import { MovingEvent } from './Moveable';
 import useGameObjectEvent from './useGameObjectEvent';
+import InteractRightClick from 'src/components/InteractRightClick';
 
 export type WillInteractEvent = PubSubEvent<'will-interact', Position>;
+export type WillInteractRightClickEvent = PubSubEvent<
+    'will-interact-right-click',
+    Position
+>;
 export type InteractionEvent = PubSubEvent<'interaction', GameObjectRef>;
+export type InteractionRightClickEvent = PubSubEvent<
+    'interaction-right-click',
+    GameObjectRef
+>;
 export type DidInteractEvent = PubSubEvent<'did-interact', Position>;
+export type DidInteractRightClickEvent = PubSubEvent<
+    'did-interact-right-click',
+    Position
+>;
 
 export type InteractionCallback = (obj: GameObjectRef) => Promise<any> | void;
 
@@ -37,6 +50,16 @@ export type InteractableRef = ComponentRef<
         onInteract: (ref: GameObjectRef) => Promise<void>;
         canInteract: () => boolean;
         canReceiveInteraction: () => boolean;
+    }
+>;
+
+export type InteractableRightClickRef = ComponentRef<
+    'InteractableRightClick',
+    {
+        interactRightClick: (position: Position) => Promise<boolean>;
+        onRightClickInteract: (ref: GameObjectRef) => Promise<void>;
+        canRightClickInteract: () => boolean;
+        canReceiveRightClickInteraction: () => boolean;
     }
 >;
 
@@ -94,6 +117,57 @@ export default function Interactable({ children }: { children?: JSX.Element }) {
             );
         },
     });
+    useComponentRegistry<InteractableRightClickRef>('InteractableRightClick', {
+        // this is executed on the game object that *initiates* an interaction
+        async interactRightClick({ x, y }) {
+            const interactables = findGameObjectsByXY(x, y)
+                .map(obj =>
+                    obj.getComponent<InteractableRightClickRef>('InteractableRightClick')
+                )
+                .filter(component => component?.canReceiveRightClickInteraction());
 
+            if (!interactables.length) return false;
+
+            publish<WillInteractRightClickEvent>('will-interact-right-click', { x, y });
+            canInteract.current = false;
+            await Promise.all(
+                interactables.map(comp => comp.onRightClickInteract(getRef()))
+            );
+            canInteract.current = true;
+            publish<DidInteractRightClickEvent>('did-interact-right-click', { x, y });
+            return true;
+        },
+        // this is executed on the game object that *receives* an interaction
+        async onRightClickInteract(gameObject) {
+            gameLevelPublish<NotificationEvent>('notification', message);
+            if (canInteract.current) {
+                console.log('obj', gameObject);
+                canInteract.current = false;
+                publish<WillInteractRightClickEvent>(
+                    'will-interact-right-click',
+                    gameObject.transform
+                );
+                await publish<InteractionRightClickEvent>(
+                    'interaction-right-click',
+                    gameObject
+                );
+                publish<DidInteractRightClickEvent>(
+                    'did-interact-right-click',
+                    gameObject.transform
+                );
+                canInteract.current = true;
+            }
+        },
+        canRightClickInteract() {
+            return canInteract.current;
+        },
+        canReceiveRightClickInteraction() {
+            return (
+                canInteract.current &&
+                hasSubscriptions<InteractionRightClickEvent>('interaction-right-click') >
+                    0
+            );
+        },
+    });
     return null;
 }

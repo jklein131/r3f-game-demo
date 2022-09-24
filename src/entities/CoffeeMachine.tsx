@@ -12,13 +12,13 @@ import spriteData from '../spriteData';
 function CoffeeScript() {
     const { getComponent } = useGameObject();
     const fillState = useRef(true);
-    const playSfx = useSound(soundData.drinking);
+    // const playSfx = useSound(soundData.drinking);
 
     useGameObjectEvent<InteractionEvent>('interaction', () => {
         if (fillState.current) {
             fillState.current = false;
             getComponent<SpriteRef>('Sprite').setState('coffee-machine-empty');
-            playSfx();
+            // playSfx();
         }
     });
 
