@@ -1,3 +1,4 @@
+import { off } from 'process';
 import React, {
     Dispatch,
     RefObject,
@@ -66,6 +67,7 @@ export type GameObjectRef = Pick<GameObjectProps, 'name' | 'displayName'> & {
     disabled: Readonly<boolean>;
     setDisabled: Dispatch<SetStateAction<boolean>>;
     subscribe: PubSub['subscribe'];
+    unsubscribe: PubSub['unsubscribe'];
 };
 
 function Persistence() {
@@ -149,6 +151,7 @@ export default function GameObject({
             disabled,
             setDisabled,
             subscribe: pubSub.subscribe,
+            unsubscribe: pubSub.unsubscribe,
         }),
         [name, displayName, layer, transform, registryUtils, disabled, pubSub]
     );
@@ -184,7 +187,7 @@ export default function GameObject({
     return (
         <GameObjectContext.Provider value={contextValue}>
             {persisted && <Persistence />}
-            <group ref={node} position={[x, y, (-y + offsetZ) / 100]}>
+            <group ref={node} position={[x, y, offsetZ]}>
                 {!disabled && children}
             </group>
         </GameObjectContext.Provider>

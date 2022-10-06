@@ -10,7 +10,7 @@ import React, {
 import useComponentRegistry, { ComponentRef } from './useComponentRegistry';
 import useGame from './useGame';
 import useGameObject from './useGameObject';
-import { GameObjectRef, Position } from './GameObject';
+import { GameObjectProps, GameObjectRef, Position } from './GameObject';
 import { PubSubEvent } from './utils/createPubSub';
 import PizzaPickup from 'src/entities/PizzaPickup';
 import Sprite, { SpriteRef } from '../@core/Sprite';
@@ -19,6 +19,7 @@ import {
     Notification,
     NotificationEvent,
     NotificationType,
+    ReNotificationEvent,
     UnNotificationEvent,
 } from './Notifications';
 import { MovingEvent } from './Moveable';
@@ -50,6 +51,15 @@ export type InteractableRef = ComponentRef<
         onInteract: (ref: GameObjectRef) => Promise<void>;
         canInteract: () => boolean;
         canReceiveInteraction: () => boolean;
+        message: Notification;
+    }
+>;
+
+export type MineableRef = ComponentRef<
+    'mineable',
+    {
+        amount: number;
+        mine: () => void;
     }
 >;
 
@@ -60,26 +70,26 @@ export type InteractableRightClickRef = ComponentRef<
         onRightClickInteract: (ref: GameObjectRef) => Promise<void>;
         canRightClickInteract: () => boolean;
         canReceiveRightClickInteraction: () => boolean;
+        message: Notification;
     }
 >;
 
-export default function Interactable({ children }: { children?: JSX.Element }) {
+export default function Interactable(
+    props: GameObjectProps & {
+        message?: Notification;
+        rightClickMessage?: Notification;
+    }
+) {
     const { findGameObjectsByXY, publish: gameLevelPublish } = useGame();
     const { getRef, publish, hasSubscriptions, subscribe } = useGameObject();
 
-    const message = {
-        id: 'old-man-jenkins',
-        action: () => {},
-        text: 'Hello Brother',
-        title: 'Can i have some cheese',
-        type: NotificationType.TALKABLE,
-    } as Notification;
-
     const canInteract = useRef(true);
-    useGameObjectEvent('moving', an => {
-        gameLevelPublish<UnNotificationEvent>('unnotification', message);
-    });
+    useEffect(() => {
+        gameLevelPublish<ReNotificationEvent>('renotification', props.message);
+    }, [props.message]);
+
     useComponentRegistry<InteractableRef>('Interactable', {
+        message: props.message,
         // this is executed on the game object that *initiates* an interaction
         async interact({ x, y }) {
             const interactables = findGameObjectsByXY(x, y)
@@ -97,9 +107,21 @@ export default function Interactable({ children }: { children?: JSX.Element }) {
         },
         // this is executed on the game object that *receives* an interaction
         async onInteract(gameObject) {
-            gameLevelPublish<NotificationEvent>('notification', message);
+            if (props.message !== undefined) {
+                gameLevelPublish<NotificationEvent>('notification', props.message);
+                publish<NotificationEvent>('notification', props.message);
+                const sub = gameObject.subscribe('will-move', on => {
+                    // console.log('ok');
+                    gameLevelPublish<UnNotificationEvent>(
+                        'unnotification',
+                        props.message
+                    );
+                    publish<UnNotificationEvent>('unnotification', props.message);
+                    gameObject.unsubscribe('will-move', sub);
+                });
+            }
             if (canInteract.current) {
-                console.log('obj', gameObject);
+                // console.log('obj', gameObject);
                 canInteract.current = false;
                 publish<WillInteractEvent>('will-interact', gameObject.transform);
                 await publish<InteractionEvent>('interaction', gameObject);
@@ -118,8 +140,15 @@ export default function Interactable({ children }: { children?: JSX.Element }) {
         },
     });
     useComponentRegistry<InteractableRightClickRef>('InteractableRightClick', {
+        message: props.message,
         // this is executed on the game object that *initiates* an interaction
         async interactRightClick({ x, y }) {
+            if (props.rightClickMessage !== undefined) {
+                gameLevelPublish<NotificationEvent>(
+                    'notification',
+                    props.rightClickMessage
+                );
+            }
             const interactables = findGameObjectsByXY(x, y)
                 .map(obj =>
                     obj.getComponent<InteractableRightClickRef>('InteractableRightClick')
@@ -139,9 +168,27 @@ export default function Interactable({ children }: { children?: JSX.Element }) {
         },
         // this is executed on the game object that *receives* an interaction
         async onRightClickInteract(gameObject) {
-            gameLevelPublish<NotificationEvent>('notification', message);
+            if (props.rightClickMessage !== undefined) {
+                gameLevelPublish<NotificationEvent>(
+                    'notification',
+                    props.rightClickMessage
+                );
+                publish<NotificationEvent>('notification', props.rightClickMessage);
+                const sub = gameObject.subscribe('will-move', on => {
+                    // console.log('ok');
+                    gameLevelPublish<UnNotificationEvent>(
+                        'unnotification',
+                        props.rightClickMessage
+                    );
+                    publish<UnNotificationEvent>(
+                        'unnotification',
+                        props.rightClickMessage
+                    );
+                    gameObject.unsubscribe('will-move', sub);
+                });
+            }
             if (canInteract.current) {
-                console.log('obj', gameObject);
+                // console.log('obj', gameObject);
                 canInteract.current = false;
                 publish<WillInteractRightClickEvent>(
                     'will-interact-right-click',

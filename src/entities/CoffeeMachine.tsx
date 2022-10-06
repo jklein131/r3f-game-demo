@@ -1,4 +1,6 @@
 import React, { useRef } from 'react';
+import { NotificationType } from 'src/@core/Notifications';
+import Interact from 'src/components/Interact';
 import Collider from '../@core/Collider';
 import GameObject, { GameObjectProps } from '../@core/GameObject';
 import Interactable, { InteractionEvent } from '../@core/Interactable';
@@ -27,11 +29,22 @@ function CoffeeScript() {
 
 export default function CoffeeMachine(props: GameObjectProps) {
     return (
-        <GameObject {...props}>
+        <GameObject {...props} layer="item">
             <Sprite {...spriteData.objects} state="bigtree1" />
             <Sprite {...spriteData.objects} state="bigtree2" offset={{ x: 0, y: 1 }} />
             <Collider />
-            <Interactable />
+            <Interact
+                showIndicator={false}
+                message={{
+                    title: 'This is a coffee Machine',
+                    text: "Don't hurt me",
+                    type: NotificationType.TALKABLE,
+                    x: props.x,
+                    y: props.y,
+                    id: 'coffee-machine',
+                    action: () => {},
+                }}
+            />
             <CoffeeScript />
         </GameObject>
     );

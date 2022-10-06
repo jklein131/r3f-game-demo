@@ -51,7 +51,7 @@ export default function createPubSub() {
     return {
         publish,
         subscribe,
-        // unsubscribe,
+        unsubscribe,
         hasSubscriptions,
     };
 }

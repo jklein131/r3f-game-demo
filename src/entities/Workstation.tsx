@@ -8,6 +8,7 @@ import useGameObject from '../@core/useGameObject';
 import useGameObjectEvent from '../@core/useGameObjectEvent';
 import waitForMs from '../@core/utils/waitForMs';
 import spriteData from '../spriteData';
+import { NotificationType } from 'src/@core/Notifications';
 
 function WorkstationScript() {
     const { getComponent } = useGameObject();
@@ -30,10 +31,22 @@ function WorkstationScript() {
 
 export default function Workstation(props: GameObjectProps) {
     return (
-        <GameObject {...props}>
+        <GameObject {...props} layer={'item'}>
             <Interact showIndicator />
             <Sprite name="workstation" {...spriteData.objects} state="workstation-1" />
             <Collider />
+            <Interact
+                showIndicator
+                message={{
+                    title: 'This is a workstation Machine',
+                    text: "Don't hurt me",
+                    type: NotificationType.SUCCESS,
+                    id: 'workstation-machine',
+                    x: props.x,
+                    y: props.y,
+                    action: () => {},
+                }}
+            />
 
             <WorkstationScript />
         </GameObject>

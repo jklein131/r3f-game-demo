@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import useGameObjectEvent from 'src/@core/useGameObjectEvent';
 import spriteData from 'src/spriteData';
 import { Position } from '../@core/GameObject';
-import { InteractableRef, InteractableRightClickRef } from '../@core/Interactable';
+import {
+    InteractableRef,
+    InteractableRightClickRef,
+    InteractionEvent,
+} from '../@core/Interactable';
 import { MoveableRef } from '../@core/Moveable';
 import useCollisionTest from '../@core/useCollisionTest';
 import useGameLoop from '../@core/useGameLoop';
@@ -13,8 +18,8 @@ import usePointerClick from '../@core/usePointerClick';
 import tileUtils from '../@core/utils/tileUtils';
 import PlayerPathOverlay from './PlayerPathOverlay';
 
-export default function PlayerScript() {
-    const { getComponent, transform } = useGameObject();
+export default function PlayerScript({ allowDiagonals }: { allowDiagonals: boolean }) {
+    const { getComponent, transform, subscribe, unsubscribe } = useGameObject();
     const testCollision = useCollisionTest();
     const findPath = usePathfinding();
     const [path, setPath] = useState<{ path: Position[]; rightClick: boolean }>({
@@ -64,7 +69,7 @@ export default function PlayerScript() {
         // left click
         if (event.button === 0) {
             try {
-                const nextPath = findPath({ to: pointer });
+                const nextPath = findPath({ to: pointer, allowDiagonals });
                 if (path.path.length > 0) {
                     nextPath.unshift(transform);
                 }
@@ -79,7 +84,7 @@ export default function PlayerScript() {
         // right click
         if (event.button === 2) {
             try {
-                const nextPath = findPath({ to: pointer });
+                const nextPath = findPath({ to: pointer, allowDiagonals });
                 if (path.path.length > 0) {
                     nextPath.unshift(transform);
                 }
@@ -121,13 +126,12 @@ export default function PlayerScript() {
     }, [path, getComponent]);
 
     return (
-        <>
-            <PlayerPathOverlay
-                path={path.path}
-                pathVisible={pathOverlayEnabled}
-                pointer={pointer}
-                plantTree={path.rightClick}
-            />
-        </>
+        <PlayerPathOverlay
+            allowDiagonals={allowDiagonals}
+            path={path.path}
+            pathVisible={pathOverlayEnabled}
+            pointer={pointer}
+            plantTree={path.rightClick}
+        />
     );
 }

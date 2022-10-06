@@ -31,6 +31,7 @@ export const characterOffsetY = 0.25;
  * It also applies a breathe animation when the character is standing still.
  */
 import * as THREE from 'three';
+import soundData from 'src/soundData';
 export default function CharacterScript({ children }: Props) {
     const { transform, getComponent } = useGameObject();
     const { instantiate } = useScene();
@@ -151,10 +152,10 @@ export default function CharacterScript({ children }: Props) {
 
     return (
         <group position-y={characterOffsetY}>
-            <group ref={groupRef}>
-                <group ref={scaleRef} position-y={-offsetY}>
+            <group ref={groupRef as any}>
+                <group ref={scaleRef as any} position-y={-offsetY}>
                     <group position-y={offsetY}>
-                        <group ref={childRef}>{children}</group>
+                        <group ref={childRef as any}>{children}</group>
                     </group>
                 </group>
             </group>

@@ -26,8 +26,8 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
     const key = `${x}-${y}`;
     const position = { x, y };
     const floor = (
-        <Fragment key={key}>
-            <GameObject key={key} {...position} layer="ground">
+        <Fragment key={'common' + key}>
+            <GameObject key={'common-go' + key} {...position} layer="ground">
                 <Sprite {...spriteData.objects} state="floor" />
             </GameObject>
         </Fragment>
@@ -68,7 +68,7 @@ export default function OtherScene() {
                 <TileMap data={mapData} resolver={resolveMapTile} definesMapSize />
             </GameObject>
 
-            <Player x={0} y={2} />
+            <Player x={0} y={2} allowDiagonals={true} />
         </>
     );
 }

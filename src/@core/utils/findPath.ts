@@ -6,6 +6,7 @@ interface PathOptions {
     from: Position;
     to: Position;
     map: number[][];
+    allowDiagonals: boolean;
 }
 
 // eslint-disable-next-line new-cap
@@ -15,9 +16,14 @@ easystar.enableDiagonals();
 easystar.disableCornerCutting();
 easystar.enableSync();
 
-export default function findPath({ from, to, map }: PathOptions) {
-    easystar.enableCornerCutting();
-    easystar.enableDiagonals();
+export default function findPath({ from, to, map, allowDiagonals }: PathOptions) {
+    easystar.disableDiagonals();
+    easystar.disableCornerCutting();
+    if (allowDiagonals) {
+        easystar.enableCornerCutting();
+        easystar.enableDiagonals();
+    }
+
     easystar.setGrid(map);
     let result = [];
     try {

@@ -40,6 +40,43 @@ export function getTilesFromMapData(
     });
     return list;
 }
+export function mapDataString3(str: string): TileMapData {
+    const lineBreak = '\n';
+    const data = [];
+    let line = -1;
+    let string = str;
+    // strip any break at the end
+    if (string[string.length - 1] === lineBreak) {
+        string = string.slice(0, -1);
+    }
+    let stack = '';
+    for (const char of string) {
+        if (char === ' ') continue;
+        if (char === '|') {
+            if (stack !== '') {
+                data[line].push(stack);
+                stack = '';
+            }
+            continue;
+        }
+        if (char === lineBreak) {
+            // if (stack.length > 0) {
+            //     data[line].push(stack);
+            //     stack = '';
+            // }
+            data[++line] = [];
+        } else {
+            if (stack.length === 3) {
+                data[line].push(stack);
+                stack = '';
+            } else {
+                stack = stack + char;
+            }
+        }
+    }
+    data.pop();
+    return data;
+}
 
 export function mapDataString(str: string): TileMapData {
     const lineBreak = '\n';

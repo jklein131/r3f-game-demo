@@ -11,7 +11,7 @@
       "es2017",
       "dom"
     ],
-    "types": ["@emotion/react/types/css-prop"], 
+    "types": ["@emotion/react/types/css-prop","node"], 
     "target": "es5",
     "jsx": "preserve",
     "skipLibCheck": true,
@@ -28,6 +28,6 @@
     "src"
   ],
   "exclude": [
-    // "node_modules"
+    "node_modules"
   ]
 }

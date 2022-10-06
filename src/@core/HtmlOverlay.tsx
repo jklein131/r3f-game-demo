@@ -11,12 +11,12 @@ export default function HtmlOverlay({ children, ...props }: HTMLProps) {
             node.current.parentElement.style.pointerEvents = 'none';
             node.current.parentElement.style.whiteSpace = 'nowrap';
         }
-    });
+    }, []);
 
     if (paused) return null;
 
     return (
-        <HTML ref={node} zIndexRange={[0, 0]} eps={0.1} {...props}>
+        <HTML ref={node} zIndexRange={[1, 9]} eps={0} {...props}>
             {children}
         </HTML>
     );

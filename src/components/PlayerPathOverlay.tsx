@@ -16,6 +16,7 @@ interface Props {
     pointer: Position;
     plantTree: boolean;
     hasTarget?: boolean;
+    allowDiagonals: boolean;
 }
 
 const offsetZ = 1.5;
@@ -26,6 +27,7 @@ export default function PlayerPathOverlay({
     pointer,
     plantTree,
     hasTarget = false,
+    allowDiagonals = true,
 }: Props) {
     const { transform, nodeRef } = useGameObject();
     const findPath = usePathfinding();
@@ -38,6 +40,7 @@ export default function PlayerPathOverlay({
         const nextPath = findPath({
             from: transform,
             to: pointer,
+            allowDiagonals: allowDiagonals,
         });
         setPointerPath(nextPath);
     }, [transform, path, pathVisible, pointer, findPath]);
@@ -84,7 +87,7 @@ export default function PlayerPathOverlay({
             {createPortal(
                 <>
                     {renderedPath}
-                    <group position={[pointer.x, pointer.y, offsetZ]}>
+                    <group key="mainpo-path" position={[pointer.x, pointer.y, offsetZ]}>
                         <Graphic
                             {...spriteData.ui}
                             state="select"
@@ -95,6 +98,7 @@ export default function PlayerPathOverlay({
                     </group>
                     {isPlantable && path.length > 0 && (
                         <group
+                            key="mainpo-p-path"
                             position={[
                                 path[path.length - 1].x,
                                 path[path.length - 1].y,

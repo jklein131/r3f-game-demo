@@ -43,6 +43,7 @@ interface Props {
 export default function Moveable({ isStatic = false }: Props) {
     const {
         settings: { movementDuration },
+        publish: publishGame,
     } = useGame();
     const { transform, publish, nodeRef } = useGameObject();
     const canMove = useRef(!isStatic);

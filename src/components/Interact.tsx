@@ -9,6 +9,12 @@ import useGameObjectEvent from '../@core/useGameObjectEvent';
 import waitForMs from '../@core/utils/waitForMs';
 import spriteData from '../spriteData';
 import HtmlOverlay from '../@core/HtmlOverlay';
+import {
+    Notification,
+    NotificationEvent,
+    NotificationType,
+    UnNotificationEvent,
+} from '../@core/Notifications';
 
 export function InteractScript({ animate }: { animate: boolean }) {
     const { getComponent } = useGameObject();
@@ -20,22 +26,28 @@ export function InteractScript({ animate }: { animate: boolean }) {
         }
     });
 
-    useGameObjectEvent<InteractionEvent>('interaction', () => {
+    useGameObjectEvent<InteractionEvent>('interaction', async () => {
         workState.current = !workState.current;
-
-        if (workState.current) {
-            getComponent<SpriteRef>('indicator').setOffset({ x: -1, y: -1 });
-        } else {
-            getComponent<SpriteRef>('indicator').setOffset({ x: 1, y: 1 });
+        if (animate) {
+            if (workState.current) {
+                getComponent<SpriteRef>('indicator').setOffset({ x: -1, y: -1 });
+            } else {
+                getComponent<SpriteRef>('indicator').setOffset({ x: 1, y: 1 });
+            }
         }
-
         return waitForMs(400);
     });
 
     return null;
 }
 
-export default function Interact(props: GameObjectProps & { showIndicator: boolean }) {
+export default function Interact(
+    props: GameObjectProps & {
+        showIndicator: boolean;
+        message?: Notification;
+        rightClickMessage?: Notification;
+    }
+) {
     return (
         <>
             {/* <HtmlOverlay
@@ -59,7 +71,7 @@ export default function Interact(props: GameObjectProps & { showIndicator: boole
                 <Typist onTypingDone={() => {}}>you are in trouble </Typist>
                 {/* {showTypingDone ? 'Press [Space] to continue' : ''} 
             </HtmlOverlay> */}
-            <Interactable />
+            <Interactable {...props}></Interactable>
             <InteractScript animate={props.showIndicator} />
             {props.showIndicator && (
                 <Sprite
@@ -69,7 +81,7 @@ export default function Interact(props: GameObjectProps & { showIndicator: boole
                     scale={0.5}
                 />
             )}
-            <Collider />
+            {/* <Collider /> */}
         </>
     );
 }

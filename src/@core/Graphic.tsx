@@ -1,17 +1,22 @@
+import { time } from 'console';
+import { off } from 'process';
 import React, { forwardRef, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useUpdate } from 'react-three-fiber';
 import * as THREE from 'three';
+import { Vector2, Vector3 } from 'three';
 import { Position } from './GameObject';
 import useAsset from './useAsset';
 import useGameLoop from './useGameLoop';
-
+import waitForMs from './utils/waitForMs';
 export interface GraphicProps {
     src: string;
     sheet?: {
         [index: string]: number[][];
     };
+    rotation?: number;
     state?: string;
     frameWidth?: number;
+    startFrame?: number;
     frameHeight?: number;
     frameTime?: number;
     scale?: number;
@@ -28,6 +33,7 @@ export interface GraphicProps {
 // create geometry once and reuse
 const geometry = new THREE.PlaneBufferGeometry(1, 1);
 
+console.log('grpahic redraw ');
 export default memo(
     /* eslint-disable react/prop-types */
     forwardRef<THREE.Object3D, GraphicProps>(function Graphic(
@@ -42,6 +48,8 @@ export default memo(
             frameTime = 200,
             scale = 1,
             flipX = 1,
+            rotation = 0,
+            startFrame = 0,
             color = '#fff',
             opacity = 1,
             offset = { x: 0, y: 0 },
@@ -58,24 +66,33 @@ export default memo(
                 `Sprite state '${state}' does not exist in sheet '${src}':`,
                 Object.keys(sheet)
             );
+            return <></>;
         }
 
         const image = useAsset(src) as HTMLImageElement;
-        const textureRef = useUpdate<THREE.Texture>(texture => {
+        const textureRef = useUpdate<THREE.Texture>(async texture => {
+            // cool loading effect but that's it.
+            await waitForMs(200);
             texture.needsUpdate = true;
         }, []);
         const mounted = useRef(true);
         const interval = useRef<number>();
         const prevFrame = useRef<number>(-1);
-        const frame = useRef(0);
+
         const frames = sheet[state];
+        const frameLength = frames.length;
+        const frame = useRef(startFrame < frameLength ? startFrame : 0);
         const [firstFrame, lastFrame = firstFrame] = frames;
-        const frameLength = lastFrame[0] + 1 - firstFrame[0];
 
         const handleFrameUpdate = useCallback(() => {
-            const currentFrame = firstFrame[0] + frame.current;
-            const textureOffsetX = (currentFrame * frameWidth) / image.width;
-            const textureOffsetY = (firstFrame[1] * frameHeight) / image.height;
+            let currentFrame = frames[frame.current];
+            if (currentFrame === undefined) {
+                //TODO fix this
+                currentFrame = frames[0];
+                return;
+            }
+            const textureOffsetX = (currentFrame[0] * frameWidth) / image.width;
+            const textureOffsetY = (currentFrame[1] * frameHeight) / image.height;
             textureRef.current.offset.setX(textureOffsetX);
             textureRef.current.offset.setY(textureOffsetY);
         }, [firstFrame, frameHeight, frameWidth, image, textureRef]);
@@ -92,6 +109,7 @@ export default memo(
                 prevFrame.current = frame.current;
                 frame.current = (frame.current + 1) % frameLength;
 
+                // do I need this?
                 handleFrameUpdate();
 
                 if (prevFrame.current > 0 && frame.current === 0) {
@@ -135,26 +153,31 @@ export default memo(
             };
             return {
                 image,
+
                 repeat: new THREE.Vector2(1 / size.x, 1 / size.y),
                 magFilter,
+
+                // center: new Vector2(size.x / 2, size.y / 2),
                 minFilter: THREE.LinearMipMapLinearFilter,
             };
         }, [frameHeight, frameWidth, image, magFilter]);
 
         return (
             <mesh
-                ref={ref}
-                position={[offset.x, offset.y, -offset.y / 100]}
+                ref={ref as any}
+                position={new Vector3(offset.x, offset.y, 0)}
                 scale={[flipX * scale, scale, 1]}
+                rotation={new THREE.Euler(offset.x, offset.y, -offset.y / 100 + rotation)}
+                // rotation={new THREE.Euler()}
                 geometry={geometry}
             >
                 {basic ? (
                     <meshBasicMaterial attach="material" {...materialProps}>
-                        <texture ref={textureRef} attach="map" {...textureProps} />
+                        <texture ref={textureRef as any} attach="map" {...textureProps} />
                     </meshBasicMaterial>
                 ) : (
                     <meshLambertMaterial attach="material" {...materialProps}>
-                        <texture ref={textureRef} attach="map" {...textureProps} />
+                        <texture ref={textureRef as any} attach="map" {...textureProps} />
                     </meshLambertMaterial>
                 )}
             </mesh>

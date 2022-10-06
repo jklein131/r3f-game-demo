@@ -1,22 +1,34 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
 import { Transition } from '@headlessui/react';
-import { CheckCircleIcon } from '@heroicons/react/outline';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/outline';
 import { XIcon } from '@heroicons/react/solid';
 import createPubSub, { PubSubEvent } from './utils/createPubSub';
+import useGameObjectEvent from './useGameObjectEvent';
+import { MovingEvent } from './Moveable';
+import { Position } from './GameObject';
 
 export enum NotificationType {
     TALKABLE,
     SUCCESS,
+    FAILURE,
+    PROGRESS,
 }
 export type Notification = {
     id: string;
     title: string;
     text: string;
     type: NotificationType;
+    progress?: number;
+    x: number;
+    y: number;
     action: () => void;
 };
+interface INotification extends Notification {
+    noshow: boolean;
+}
 export type NotificationEvent = PubSubEvent<'notification', Notification>;
+export type ReNotificationEvent = PubSubEvent<'renotification', Notification>;
 export type UnNotificationEvent = PubSubEvent<'unnotification', Notification>;
 
 export function NotificationWindow({
@@ -24,8 +36,8 @@ export function NotificationWindow({
 }: {
     pubSub: ReturnType<typeof createPubSub>;
 }) {
-    const [show, setShow] = useState(true);
-    const [messageQueue, setMessageQueue] = useState<Notification[]>([
+    // const [show, setShow] = useState(true);
+    const [messageQueue, setMessageQueue] = useState<INotification[]>([
         // {
         //     type: NotificationType.TALKABLE,
         //     title: 'Old Man Jenkins',
@@ -33,18 +45,47 @@ export function NotificationWindow({
         //     action: () => {},
         // },
     ]);
+    pubSub.subscribe('will-move', (an: Position) => {
+        console.log('wil move ', an);
+        setMessageQueue([
+            ...messageQueue.filter(
+                mes => Math.abs(mes.x - an.x) > 1 || Math.abs(mes.y - an.y) > 1
+            ),
+        ]);
+        // if (rightClickMessage !== undefined) {
+        //     gameLevelPublish<UnNotificationEvent>('unnotification', rightClickMessage);
+        // }
+    });
     useEffect(() => {
         return pubSub.subscribe('notification', notif => {
-            setMessageQueue([...messageQueue, notif]);
+            setMessageQueue([...messageQueue.filter(mes => mes.id !== notif.id), notif]);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [pubSub, messageQueue]);
+    useEffect(() => {
+        return pubSub.subscribe('renotification', notif => {
+            if (messageQueue.find(mes => mes.id === notif.id)) {
+                setMessageQueue([
+                    ...messageQueue.filter(mes => mes.id !== notif.id),
+                    notif,
+                ]);
+            }
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pubSub, messageQueue]);
     useEffect(() => {
         return pubSub.subscribe('unnotification', notif => {
-            setMessageQueue(messageQueue.filter(mes => mes.id !== notif.id));
+            setMessageQueue(
+                messageQueue.map(mes =>
+                    mes.id === notif.id ? { noshow: true, ...mes } : mes
+                )
+            );
+            setTimeout(() => {
+                setMessageQueue(messageQueue.filter(mes => mes.id !== notif.id));
+            }, 100);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [pubSub, messageQueue]);
 
     return (
         <>
@@ -56,10 +97,15 @@ export function NotificationWindow({
                 <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
                     {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
                     {messageQueue.map(message => {
-                        if (message.type === NotificationType.SUCCESS) {
+                        if (
+                            message.type === NotificationType.SUCCESS ||
+                            message.type === NotificationType.FAILURE
+                        ) {
                             return (
                                 <Transition
-                                    show={show}
+                                    key={message.id}
+                                    show={!message.noshow}
+                                    appear={!message.noshow}
                                     as={Fragment}
                                     enter="transform ease-out duration-300 transition"
                                     enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
@@ -72,18 +118,25 @@ export function NotificationWindow({
                                         <div className="p-4">
                                             <div className="flex items-start">
                                                 <div className="flex-shrink-0">
-                                                    <CheckCircleIcon
-                                                        className="h-6 w-6 text-green-400"
-                                                        aria-hidden="true"
-                                                    />
+                                                    {message.type ===
+                                                    NotificationType.SUCCESS ? (
+                                                        <CheckCircleIcon
+                                                            className="h-6 w-6 text-green-400"
+                                                            aria-hidden="true"
+                                                        />
+                                                    ) : (
+                                                        <XCircleIcon
+                                                            className="h-6 w-6 text-red-400"
+                                                            aria-hidden="true"
+                                                        />
+                                                    )}
                                                 </div>
                                                 <div className="ml-3 w-0 flex-1 pt-0.5">
                                                     <p className="text-sm font-medium text-gray-900">
-                                                        Successfully saved!
+                                                        {message.title}
                                                     </p>
                                                     <p className="mt-1 text-sm text-gray-500">
-                                                        Anyone with a link can now view
-                                                        this file.
+                                                        {message.text}
                                                     </p>
                                                 </div>
                                                 <div className="ml-4 flex-shrink-0 flex">
@@ -91,7 +144,13 @@ export function NotificationWindow({
                                                         type="button"
                                                         className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                                         onClick={() => {
-                                                            setShow(false);
+                                                            setMessageQueue(
+                                                                messageQueue.filter(
+                                                                    mess =>
+                                                                        mess.id !==
+                                                                        message.id
+                                                                )
+                                                            );
                                                         }}
                                                     >
                                                         <span className="sr-only">
@@ -111,8 +170,10 @@ export function NotificationWindow({
                         }
                         return (
                             <Transition
+                                key={message.id}
                                 show
                                 as={Fragment}
+                                appear={true}
                                 enter="transform ease-out duration-300 transition"
                                 enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
                                 enterTo="translate-y-0 opacity-100 sm:translate-x-0"
@@ -145,10 +206,15 @@ export function NotificationWindow({
                                             type="button"
                                             className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                             onClick={() => {
-                                                setShow(false);
+                                                // setShow(false);
+                                                console.log(
+                                                    'talk',
+                                                    messageQueue,
+                                                    message
+                                                );
                                                 setMessageQueue(
                                                     messageQueue.filter(
-                                                        mess => mess.text !== message.text
+                                                        mess => mess.id !== message.id
                                                     )
                                                 );
                                             }}

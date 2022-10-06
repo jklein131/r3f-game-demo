@@ -7,6 +7,7 @@ import useMapSnapshot from './useMapSnapshot';
 interface PathfindingOptions {
     from?: Position;
     to: Position;
+    allowDiagonals: boolean;
 }
 
 export default function usePathfinding() {
@@ -14,11 +15,12 @@ export default function usePathfinding() {
     const createMap = useMapSnapshot();
 
     return useCallback(
-        ({ from = transform, to }: PathfindingOptions) => {
+        ({ from = transform, to, allowDiagonals }: PathfindingOptions) => {
             return findPath({
                 from,
                 to,
                 map: createMap(to),
+                allowDiagonals,
             });
         },
         [createMap, transform]
