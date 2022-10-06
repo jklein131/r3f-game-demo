@@ -1,18 +1,16 @@
 import React, { Fragment, useRef, useState } from 'react';
-import Collider from 'src/@core/Collider';
-import Graphic from 'src/@core/Graphic';
-import HtmlOverlay from 'src/@core/HtmlOverlay';
-import Interactable, { InteractableRef, InteractionEvent } from 'src/@core/Interactable';
-import { WillMoveEvent } from 'src/@core/Moveable';
-import { NotificationType } from 'src/@core/Notifications';
-import { useSound } from 'src/@core/Sound';
-import useGame from 'src/@core/useGame';
-import useGameLoop from 'src/@core/useGameLoop';
-import useGameObject from 'src/@core/useGameObject';
-import useGameObjectEvent from 'src/@core/useGameObjectEvent';
-import Interact from 'src/components/Interact';
-import Mineable from 'src/components/Mineable';
-import soundData from 'src/soundData';
+import Collider from '../@core/Collider';
+import Interactable, { InteractableRef, InteractionEvent } from '../@core/Interactable';
+import { WillMoveEvent } from '../@core/Moveable';
+import { NotificationType } from '../@core/Notifications';
+import { useSound } from '../@core/Sound';
+import useGame from '../@core/useGame';
+import useGameLoop from '../@core/useGameLoop';
+import useGameObject from '../@core/useGameObject';
+import useGameObjectEvent from '../@core/useGameObjectEvent';
+import Interact from '../components/Interact';
+import Mineable from '../components/Mineable';
+import soundData from '../soundData';
 import { AdditiveBlending, AnimationUtils, NormalBlending } from 'three';
 import GameObject, { GameObjectProps } from '../@core/GameObject';
 import Sprite, { SpriteRef } from '../@core/Sprite';
@@ -66,19 +64,7 @@ export default function Stone(props: GameObjectProps & { amount: number }) {
     }
     return (
         <GameObject {...props} layer="ground-decal">
-            {/* <Graphic
-                {...spriteData.tar}
-                state={show ? 'default' : 'static'}
-                startFrame={
-                    show
-                        ? getRandomInt(0, spriteData.tar.sheet.default.length + 1)
-                        : undefined
-                }
-                basic
-            /> */}
-
             <RockScript></RockScript>
-
             <Mineable
                 amount={amount}
                 setAmount={setAmount}
@@ -88,9 +74,6 @@ export default function Stone(props: GameObjectProps & { amount: number }) {
                     </Fragment>
                 }
             >
-                <HtmlOverlay>
-                    <span className="font-serif">{amount.toString()}</span>
-                </HtmlOverlay>
                 <Interact
                     showIndicator={false}
                     message={{
@@ -107,11 +90,10 @@ export default function Stone(props: GameObjectProps & { amount: number }) {
                     {...spriteData.stones}
                     state={stoneState.toString()}
                     name="stone"
-                    basic
                     // scale={((props.amount / 999) * 1) / 2 + 1}
                     // offset={{ x: (props.x % 10) / 5, y: (props.y % 10) / 5 }}
                     // rotation={getRandomInt(0, 360)}
-                    // blending={isGold ? AdditiveBlending : NormalBlending}
+                    blending={isGold ? AdditiveBlending : NormalBlending}
                     color={isCoal ? '#555' : isRuby ? 'red' : isGold ? 'yellow' : '#fff'}
                 ></Sprite>
                 <Collider />

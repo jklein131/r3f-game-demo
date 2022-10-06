@@ -134,7 +134,6 @@ export default function OfficeScene() {
     return (
         <>
             <GameObject name="map">
-                <ambientLight />
                 <TileMap
                     data={mapData}
                     resolver={resolveMapTile}
@@ -142,11 +141,6 @@ export default function OfficeScene() {
                     key={'officetilemap'}
                 />
             </GameObject>
-            {/* <GameObject x={16} y={5}>
-                <Collider />
-                <Interactable />
-                <ScenePortal name="exit" enterDirection={[-1, 0]} target="other/start" />
-            </GameObject> */}
         </>
     );
 }

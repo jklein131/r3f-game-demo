@@ -1,8 +1,8 @@
 import React, { ComponentRef, useCallback, useRef } from 'react';
-import useGame from 'src/@core/useGame';
-import useGameLoop from 'src/@core/useGameLoop';
-import useGameObject from 'src/@core/useGameObject';
-import useGameObjectEvent from 'src/@core/useGameObjectEvent';
+import useGame from '../@core/useGame';
+import useGameLoop from '../@core/useGameLoop';
+import useGameObject from '../@core/useGameObject';
+import useGameObjectEvent from '../@core/useGameObjectEvent';
 import Collider from '../@core/Collider';
 import GameObject, { GameObjectProps, GameObjectRef } from '../@core/GameObject';
 import Interactable, {

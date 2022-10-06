@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { NotificationType } from 'src/@core/Notifications';
-import Interact from 'src/components/Interact';
+import { NotificationType } from '../@core/Notifications';
+import Interact from '../components/Interact';
 import Collider from '../@core/Collider';
 import GameObject, { GameObjectProps } from '../@core/GameObject';
 import Interactable, { InteractionEvent } from '../@core/Interactable';

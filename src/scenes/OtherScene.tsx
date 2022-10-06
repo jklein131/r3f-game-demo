@@ -35,7 +35,7 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
 
     switch (type) {
         case '·':
-            return <>{floor}</>;
+            return <Fragment>{floor}</Fragment>;
         case '#':
             return (
                 <GameObject key={key} {...position} layer="wall">

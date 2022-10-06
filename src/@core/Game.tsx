@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import { Canvas } from 'react-three-fiber';
+import { Canvas } from '@react-three/fiber';
 import { GameObjectLayer, GameObjectRef } from './GameObject';
 import { SceneExitEvent } from './Scene';
 import createPubSub, { PubSub } from './utils/createPubSub';
@@ -150,6 +150,7 @@ export default function Game({
     return (
         <div css={styles.root}>
             <Canvas
+                legacy={true}
                 camera={{
                     position: [0, 0, 32],
                     zoom: cameraZoom,
@@ -157,12 +158,12 @@ export default function Game({
                     far: 64,
                 }}
                 orthographic
-                noEvents
-                gl2
-                // @ts-ignore
-                gl={{ antialias: false }}
+                flat
+                shadows={false}
+                gl={{ antialias: false, physicallyCorrectLights: true }}
                 onContextMenu={e => e.preventDefault()}
             >
+                <ambientLight />
                 <GameContext.Provider value={contextValue}>
                     {children}
                 </GameContext.Provider>

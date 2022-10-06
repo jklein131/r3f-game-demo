@@ -7,7 +7,7 @@ import React, {
     useState,
 } from 'react';
 import * as THREE from 'three';
-import { createPortal } from 'react-three-fiber';
+import { createPortal } from '@react-three/fiber';
 import useGame from './useGame';
 import useSceneManager from './useSceneManager';
 import { PubSubEvent } from './utils/createPubSub';
@@ -58,7 +58,7 @@ export default function Scene({ id, children }: Props) {
     const { currentScene, currentLevel, prevLevel, resetScene, setLevel } =
         useSceneManager();
     const [instances, setInstances] = useState<React.ReactElement[]>([]);
-    const idleCallback = useRef();
+    const idleCallback = useRef(0);
 
     const initEvents = useCallback(async () => {
         await publish<SceneInitEvent>('scene-init', id);
@@ -76,7 +76,7 @@ export default function Scene({ id, children }: Props) {
             instantiate(newElement, portalNode) {
                 const key = newElement.key == null ? Math.random() : newElement.key;
                 const instance = portalNode
-                    ? createPortal(newElement, portalNode, null, key)
+                    ? createPortal(newElement, portalNode, null)
                     : React.cloneElement(newElement, { key });
                 setInstances(current => [...current, instance as React.ReactElement]);
                 return () => {
@@ -127,7 +127,6 @@ export default function Scene({ id, children }: Props) {
         <SceneContext.Provider value={contextValue}>
             <LevelContext.Provider value={levelContextValue}>
                 <group>
-                    {/* just to ensure node.parent in a GO still remains within the scene */}
                     <group>
                         <>{children}</>
                         <>{instances}</>

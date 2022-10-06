@@ -12,9 +12,9 @@ import useGame from './useGame';
 import useGameObject from './useGameObject';
 import { GameObjectProps, GameObjectRef, Position } from './GameObject';
 import { PubSubEvent } from './utils/createPubSub';
-import PizzaPickup from 'src/entities/PizzaPickup';
+import PizzaPickup from '../entities/PizzaPickup';
 import Sprite, { SpriteRef } from '../@core/Sprite';
-import spriteData from 'src/spriteData';
+import spriteData from '../spriteData';
 import {
     Notification,
     NotificationEvent,
@@ -22,9 +22,6 @@ import {
     ReNotificationEvent,
     UnNotificationEvent,
 } from './Notifications';
-import { MovingEvent } from './Moveable';
-import useGameObjectEvent from './useGameObjectEvent';
-import InteractRightClick from 'src/components/InteractRightClick';
 
 export type WillInteractEvent = PubSubEvent<'will-interact', Position>;
 export type WillInteractRightClickEvent = PubSubEvent<

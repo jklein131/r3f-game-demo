@@ -2,7 +2,7 @@ import { SpriteProps } from './@core/Sprite';
 
 const spriteData: { [index: string]: SpriteProps } = {
     ui: {
-        src: './assets/ui.png',
+        src: './assets/ui2.png',
         sheet: {
             'self-select': [
                 [4, 0],
@@ -14,9 +14,10 @@ const spriteData: { [index: string]: SpriteProps } = {
         },
     },
     stones: {
-        src: './assets/stones20x20.png',
-        frameWidth: 40,
-        frameHeight: 40,
+        src: './assets/stones2.png',
+        frameWidth: 170,
+        opacity: 1,
+        frameHeight: 170,
         sheet: {
             '1': [[0, 0]],
             '2': [[1, 0]],
@@ -39,9 +40,9 @@ const spriteData: { [index: string]: SpriteProps } = {
         },
     },
     player: {
-        src: './assets/player.png',
-        frameWidth: 20,
-        frameHeight: 20,
+        src: './assets/player6464.png',
+        frameWidth: 21,
+        frameHeight: 21,
         frameTime: 300,
         sheet: {
             default: [[0, 2]],
@@ -56,7 +57,7 @@ const spriteData: { [index: string]: SpriteProps } = {
         },
     },
     objects: {
-        src: './assets/objects.png',
+        src: './assets/objects2.png',
         frameWidth: 20,
         frameHeight: 20,
         sheet: {

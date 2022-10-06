@@ -6,9 +6,9 @@ import {
     useMemo,
     useState,
 } from 'react';
-import { GameObjectProps } from 'src/@core/GameObject';
-import { MineableRef } from 'src/@core/Interactable';
-import useComponentRegistry from 'src/@core/useComponentRegistry';
+import { GameObjectProps } from '../@core/GameObject';
+import { MineableRef } from '../@core/Interactable';
+import useComponentRegistry from '../@core/useComponentRegistry';
 
 export default function Mineable(
     props: GameObjectProps & {
@@ -29,7 +29,7 @@ export default function Mineable(
         mine: () => props.setAmount(props.amount - 1),
     });
     if (props.amount <= 0) {
-        return <>{props.after}</>;
+        return <Fragment>{props.after}</Fragment>;
     }
     return <Fragment>{props.children}</Fragment>;
 }

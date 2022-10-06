@@ -13,8 +13,7 @@ import Plant from '../entities/Plant';
 import Player from '../entities/Player';
 import Workstation from '../entities/Workstation';
 import spriteData from '../spriteData';
-import Tar from 'src/entities/Tar';
-import Stone from 'src/entities/Stone';
+import Stone from '../entities/Stone';
 import { createNoise2D } from 'simplex-noise';
 
 const mapData = mapDataString(` 
@@ -161,7 +160,6 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
             );
 
         default:
-            console.log('typeof', typeof type);
             const rockAmount = parseInt(type as string);
             return (
                 <Fragment key={key}>
@@ -184,9 +182,9 @@ export default function MiningScene() {
     useEffect(() => {
         let data: TileMapData = [];
         //generate map
-        for (let x = 0; x < 25; x++) {
+        for (let x = 0; x < 10; x++) {
             data[x] = [];
-            for (let y = 0; y < 25; y++) {
+            for (let y = 0; y < 10; y++) {
                 const r = noise2D(x / 4, y / 4) * 500;
                 // const r2 = noise2D(x / 8, y / 8) * 500;
                 if (r < -100) {
@@ -203,17 +201,13 @@ export default function MiningScene() {
 
     return (
         <>
-            {map !== undefined && (
+            {map !== undefined ? (
                 <GameObject name="map">
-                    <ambientLight />
                     <TileMap data={map} resolver={resolveMapTile} definesMapSize />
                 </GameObject>
+            ) : (
+                <></>
             )}
-            {/* <GameObject x={16} y={5}>
-                <Collider />
-                <Interactable />
-                <ScenePortal name="exit" enterDirection={[-1, 0]} target="other/start" />
-            </GameObject> */}
         </>
     );
 }

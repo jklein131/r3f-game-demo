@@ -46,18 +46,8 @@ export default function App() {
     return (
         <>
             <Global styles={globalStyles} />
-            {/* <TreeSelector /> */}
-
             <NotificationWindow pubSub={pubSub} />
-            <div id="swag" css={styles.root(width, height)}>
-                {/* <DialogBox
-                    messages={['hellpo', 'josh']}
-                    characterName="Josh"
-                    onDialogEnded={() => {}}
-                    screenHeight={height}
-                    screenWidth={width}
-                /> */}
-
+            <div id="swag2" css={styles.root(width, height)}>
                 <Game cameraZoom={80} pubSub={pubSub}>
                     <AssetLoader urls={urls} placeholder="Loading assets ...">
                         <SceneManager defaultScene="mining">

@@ -1,4 +1,4 @@
-import { HTML } from 'drei';
+import { Html } from '@react-three/drei';
 import React from 'react';
 import { AssetLoaderProvider } from './AssetLoader';
 import { GameContext } from './Game';
@@ -12,10 +12,10 @@ export default function GameUi({ children }: Props) {
     const gameContextValue = useGame(); // forwarded to dom reconciler
 
     return (
-        <HTML eps={1} zIndexRange={[0, 0]}>
+        <Html eps={1} zIndexRange={[0, 0]}>
             <GameContext.Provider value={gameContextValue}>
                 <AssetLoaderProvider>{children}</AssetLoaderProvider>
             </GameContext.Provider>
-        </HTML>
+        </Html>
     );
 }

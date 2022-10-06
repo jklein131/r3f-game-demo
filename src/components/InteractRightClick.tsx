@@ -36,30 +36,8 @@ export default function InteractRightClick(
 ) {
     return (
         <>
-            {/* <HtmlOverlay
-                center
-                
-                style={{
-                    backgroundColor: '#dbbc7f',
-                    position: 'fixed',
-                    top: 0,
-                    border: 'solid black',
-                    display: 'float',
-                    padding: '1rem',
-                    // height: '100vh',
-                    // width: '100vw',
-                    margin: '1rem',
-
-                    flexGrow: 1,
-                    fontSize: '2rem',
-                }}
-            >
-                <Typist onTypingDone={() => {}}>you are in trouble </Typist>
-                {/* {showTypingDone ? 'Press [Space] to continue' : ''} 
-            </HtmlOverlay> */}
             <Interactable />
             <InteractScriptRightClick fnc={props.onRightClick} />
-            {/* <Sprite name="indicator" {...spriteData.objects} state="arrow" scale={0.5} /> */}
         </>
     );
 }

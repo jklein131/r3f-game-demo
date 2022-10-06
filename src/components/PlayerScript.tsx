@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import useGameObjectEvent from 'src/@core/useGameObjectEvent';
-import spriteData from 'src/spriteData';
 import { Position } from '../@core/GameObject';
 import {
     InteractableRef,

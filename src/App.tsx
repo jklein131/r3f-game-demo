@@ -46,17 +46,8 @@ export default function App() {
         <>
             <Global styles={globalStyles} />
             <TreeSelector />
-
             <NotificationWindow pubSub={pubSub} />
             <div id="swag" css={styles.root(width, height)}>
-                {/* <DialogBox
-                    messages={['hellpo', 'josh']}
-                    characterName="Josh"
-                    onDialogEnded={() => {}}
-                    screenHeight={height}
-                    screenWidth={width}
-                /> */}
-
                 <Game cameraZoom={80} pubSub={pubSub}>
                     <AssetLoader urls={urls} placeholder="Loading assets ...">
                         <SceneManager defaultScene="office">

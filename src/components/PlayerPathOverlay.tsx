@@ -68,14 +68,13 @@ export default function PlayerPathOverlay({
                           {...spriteData.ui}
                           state="dot"
                           opacity={Math.min(0.75, index / 5)}
-                          basic
                       />
                   </group>
               ))
             : pointerPath.map(({ x, y }) => (
                   // eslint-disable-next-line react/jsx-indent
                   <group key={`${x}-${y}`} position={[x, y, offsetZ]}>
-                      <Graphic {...spriteData.ui} state="dot" opacity={0.25} basic />
+                      <Graphic {...spriteData.ui} state="dot" opacity={0.25} />
                   </group>
               ));
     }
@@ -93,7 +92,6 @@ export default function PlayerPathOverlay({
                             state="select"
                             color={selectColor}
                             opacity={pathVisible ? 1 : 0.5}
-                            basic
                         />
                     </group>
                     {isPlantable && path.length > 0 && (

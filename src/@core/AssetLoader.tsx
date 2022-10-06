@@ -6,7 +6,6 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import HtmlOverlay from './HtmlOverlay';
 import useStateFromProp from './useStateFromProp';
 
 export type AssetType = HTMLImageElement | HTMLAudioElement;
@@ -90,7 +89,6 @@ export default function AssetLoader({ urls: urlsProp, placeholder, children }: P
                     assets.current[url] = asset;
                     if (mounted.current) setCount(current => current + 1);
                 } catch {
-                    // eslint-disable-next-line no-console
                     console.error('Error loading asset:', url);
                 }
             }
@@ -105,7 +103,6 @@ export default function AssetLoader({ urls: urlsProp, placeholder, children }: P
             timeout.current = setTimeout(() => {
                 setCount(0);
                 setUrls(urls.slice());
-                // eslint-disable-next-line no-console
                 console.warn('AssetLoader failed loading after timeout.');
             }, delay);
             return () => clearTimeout(timeout.current);
@@ -114,11 +111,7 @@ export default function AssetLoader({ urls: urlsProp, placeholder, children }: P
     }, [urls, setUrls]);
 
     if (count < uniqueUrls.current.size) {
-        return placeholder ? (
-            <HtmlOverlay center>
-                <span>{placeholder}</span>
-            </HtmlOverlay>
-        ) : null;
+        return placeholder ? <></> : null;
     }
 
     return <AssetLoaderProvider>{children}</AssetLoaderProvider>;

@@ -1,4 +1,4 @@
-import { useThree } from 'react-three-fiber';
+import { useThree } from '@react-three/fiber';
 import { MoveableRef, MoveDirection } from './Moveable';
 import { SceneInitEvent, SceneReadyEvent } from './Scene';
 import useComponentRegistry, { ComponentRef } from './useComponentRegistry';

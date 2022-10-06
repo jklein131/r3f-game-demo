@@ -102,7 +102,7 @@ export default function TreeSelector() {
                                                             </p>
                                                         </div>
                                                         <p className="mt-2 text-sm font-medium text-indigo-600 lg:mt-4">
-                                                            Learn more{' '}
+                                                            Learn more
                                                             <span aria-hidden="true">
                                                                 &rarr;
                                                             </span>

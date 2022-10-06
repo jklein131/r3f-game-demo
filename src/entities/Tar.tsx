@@ -59,7 +59,6 @@ export default function Tar(props: GameObjectProps) {
                 {...spriteData.tar2}
                 state={'default'}
                 name="tar"
-                basic
                 scale={2}
                 rotation={getRandomInt(0, 360)}
             ></Sprite>

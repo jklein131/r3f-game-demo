@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { HTML, HTMLProps } from 'drei';
+// import { HTML, HTMLProps } from 'drei';
+import { Html } from '@react-three/drei';
 import useGame from './useGame';
+// import { HtmlProps } from '@react-three/drei/web/Html';
 
-export default function HtmlOverlay({ children, ...props }: HTMLProps) {
+export default function HtmlOverlay({ children, ...props }: any) {
     const { paused } = useGame();
     const node = useRef<HTMLDivElement>();
 
@@ -16,8 +18,8 @@ export default function HtmlOverlay({ children, ...props }: HTMLProps) {
     if (paused) return null;
 
     return (
-        <HTML ref={node} zIndexRange={[1, 9]} eps={0} {...props}>
+        <Html ref={node} zIndexRange={[1, 9]} eps={0} {...props}>
             {children}
-        </HTML>
+        </Html>
     );
 }

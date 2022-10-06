@@ -106,10 +106,7 @@ export default function Moveable({ isStatic = false }: Props) {
                 y: [fromY, toY],
                 duration: movementDuration,
                 easing: 'linear',
-                begin() {
-                    if (dirX) transform.setX(targetPosition.x);
-                    if (dirY) transform.setY(targetPosition.y);
-                },
+                begin() {},
                 update() {
                     !isForced &&
                         publish<MovingEvent>('moving', {
@@ -118,6 +115,10 @@ export default function Moveable({ isStatic = false }: Props) {
                             direction: movingDirection.current,
                             facingDirection: facingDirection.current,
                         });
+                },
+                complete() {
+                    if (dirX) transform.setX(targetPosition.x);
+                    if (dirY) transform.setY(targetPosition.y);
                 },
             }).finished;
 

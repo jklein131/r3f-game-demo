@@ -1,9 +1,8 @@
 import { time } from 'console';
 import { off } from 'process';
 import React, { forwardRef, memo, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useUpdate } from 'react-three-fiber';
 import * as THREE from 'three';
-import { Vector2, Vector3 } from 'three';
+import { MeshStandardMaterial, Vector2, Vector3 } from 'three';
 import { Position } from './GameObject';
 import useAsset from './useAsset';
 import useGameLoop from './useGameLoop';
@@ -24,7 +23,6 @@ export interface GraphicProps {
     color?: string;
     opacity?: number;
     offset?: Position;
-    basic?: boolean;
     blending?: THREE.Blending;
     magFilter?: THREE.TextureFilter;
     onIteration?: () => void;
@@ -53,7 +51,6 @@ export default memo(
             color = '#fff',
             opacity = 1,
             offset = { x: 0, y: 0 },
-            basic,
             blending = THREE.NormalBlending,
             magFilter = THREE.NearestFilter,
             onIteration,
@@ -70,11 +67,8 @@ export default memo(
         }
 
         const image = useAsset(src) as HTMLImageElement;
-        const textureRef = useUpdate<THREE.Texture>(async texture => {
-            // cool loading effect but that's it.
-            await waitForMs(200);
-            texture.needsUpdate = true;
-        }, []);
+        const textureRef = useRef<THREE.Texture>(new THREE.Texture(image));
+        textureRef.current.needsUpdate = true;
         const mounted = useRef(true);
         const interval = useRef<number>();
         const prevFrame = useRef<number>(-1);
@@ -140,6 +134,9 @@ export default memo(
                 depthTest: false,
                 depthWrite: false,
                 fog: false,
+                // emissive: new THREE.Color('black'),
+                // emissiveIntensity: 0,
+
                 flatShading: true,
                 precision: 'lowp',
             }),
@@ -168,18 +165,12 @@ export default memo(
                 position={new Vector3(offset.x, offset.y, 0)}
                 scale={[flipX * scale, scale, 1]}
                 rotation={new THREE.Euler(offset.x, offset.y, -offset.y / 100 + rotation)}
-                // rotation={new THREE.Euler()}
                 geometry={geometry}
             >
-                {basic ? (
-                    <meshBasicMaterial attach="material" {...materialProps}>
-                        <texture ref={textureRef as any} attach="map" {...textureProps} />
-                    </meshBasicMaterial>
-                ) : (
-                    <meshLambertMaterial attach="material" {...materialProps}>
-                        <texture ref={textureRef as any} attach="map" {...textureProps} />
-                    </meshLambertMaterial>
-                )}
+                <meshBasicMaterial attach="material" {...materialProps}>
+                    {/* <texture ref={textureRef as any} attach="alpha" {...textureProps} /> */}
+                    <texture ref={textureRef as any} attach="map" {...textureProps} />
+                </meshBasicMaterial>
             </mesh>
         );
     })

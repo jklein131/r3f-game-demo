@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useThree } from 'react-three-fiber';
+import { useThree } from '@react-three/fiber';
 import useGame from './useGame';
 
 export default function usePointerClick(clickCallback: (event: PointerEvent) => void) {

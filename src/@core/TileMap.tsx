@@ -12,7 +12,6 @@ export type TileMapResolver = (
     x: number,
     y: number
 ) => React.ReactElement;
-
 interface Props {
     data: TileMapData;
     resolver?: TileMapResolver;
@@ -22,7 +21,6 @@ interface Props {
 export default function TileMap({ data, resolver, definesMapSize = false }: Props) {
     const { setMapSize, publish } = useGame();
     // const [mapData, setMapData] = useState([]);
-    console.log('tilemap');
     const mapData = useMemo(() => data.slice().reverse(), [data]);
 
     useEffect(() => {

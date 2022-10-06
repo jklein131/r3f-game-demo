@@ -7,7 +7,6 @@ import spriteData from '../spriteData';
 import InteractRightClick from './InteractRightClick';
 import Interactable from '../@core/Interactable';
 import useComponentRegistry, { ComponentRef } from '../@core/useComponentRegistry';
-import { useAspect } from 'drei';
 import Plant from '../entities/Plant';
 
 export type PlantableRef = ComponentRef<
@@ -27,8 +26,8 @@ export default function Plantable(props: GameObjectProps) {
     return (
         <>
             <GameObject name="plantable" {...props}>
-                {plant && <Collider />}
-                {plant && <Plant />}
+                {plant ? <Collider /> : null}
+                {plant ? <Plant /> : null}
                 <InteractRightClick onRightClick={() => isPlant(true)} />
             </GameObject>
         </>
