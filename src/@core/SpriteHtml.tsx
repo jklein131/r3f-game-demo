@@ -46,16 +46,16 @@ export default function SpriteHtml({
 }) {
     console.log(
         'imgs',
-        sheet[state].at(0)[0] * frameWidth,
-        sheet[state].at(0)[1] * frameHeight
+        sheet[state][0][0] * frameWidth,
+        sheet[state][0][1] * frameHeight
     );
     const bimg =
         'url(' +
         src +
         ') left ' +
-        -sheet[state].at(0)[0] * frameWidth +
+        -sheet[state][0][0] * frameWidth +
         'px bottom ' +
-        sheet[state].at(0)[1] * frameHeight +
+        sheet[state][0][1] * frameHeight +
         'px';
     console.log('bimg', bimg);
     return (

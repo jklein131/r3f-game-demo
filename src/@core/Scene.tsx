@@ -63,12 +63,12 @@ export default function Scene({ id, children }: Props) {
     const initEvents = useCallback(async () => {
         await publish<SceneInitEvent>('scene-init', id);
         // ensure everything is ready on next idle callback
-        idleCallback.current = window.requestIdleCallback(
-            () => {
-                publish<SceneReadyEvent>('scene-ready', id);
-            },
-            { timeout: sceneReadyTimeout }
-        );
+        // idleCallback.current = window.requestIdleCallback(
+        //     () => {
+        //         publish<SceneReadyEvent>('scene-ready', id);
+        //     },
+        //     { timeout: sceneReadyTimeout }
+        // );
     }, [publish, id]);
 
     const contextValue = useMemo<SceneContextValue>(
