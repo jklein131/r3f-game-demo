@@ -2,7 +2,6 @@ import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import useGame from 'src/@core/useGame';
 import createPubSub, { PubSubEvent } from 'src/@core/utils/createPubSub';
 
 type RollEventDetails = {
