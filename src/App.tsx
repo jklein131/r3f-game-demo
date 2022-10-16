@@ -14,6 +14,7 @@ import globalStyles from './styles/global';
 import { NotificationWindow } from './@core/Notifications';
 import createPubSub from './@core/utils/createPubSub';
 import TreeSelector from './@core/TreeSelector';
+import MiningSuccessOverlay from './components/ui/MiningSuccessOverlay';
 
 const styles = {
     root: (width: number, height: number) => css`
@@ -41,7 +42,8 @@ export default function App() {
     //         setText('');
     //     }
     // });
-    const [pubSub] = useState(() => createPubSub());
+    const t = createPubSub();
+    const [pubSub] = useState(t);
     return (
         <>
             <Global styles={globalStyles} />

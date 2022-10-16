@@ -12,8 +12,8 @@ function getRoundedCameraPosition(camera: THREE.Camera) {
     const vector = camera.position.clone();
     // world to rounded screen position
     vector.project(camera);
-    vector.x = Math.round(((vector.x + 1) * window.innerWidth) / 2);
-    vector.y = Math.round(((-vector.y + 1) * window.innerHeight) / 2);
+    vector.x = Math.floor(Math.round(((vector.x + 1) * window.innerWidth) / 2));
+    vector.y = Math.floor(Math.round(((-vector.y + 1) * window.innerHeight) / 2));
     // screen to world position
     vector.set(
         (vector.x / window.innerWidth) * 2 - 1,
@@ -90,8 +90,9 @@ export default function CameraFollowScript() {
     });
 
     // following camera
-    useFrame(() => {
+    useFrame((asf, asf2) => {
         const { x, y } = clampPositionToViewport(nodeRef.current.position);
+        // console.log('here', nodeRef.current.position);
         if (!isReady.current) {
             // set camera to player node initially
             camera.position.setX(x);
@@ -102,21 +103,22 @@ export default function CameraFollowScript() {
                 ((camera.position.x * 100) | 0) !== ((x * 100) | 0) ||
                 ((camera.position.y * 100) | 0) !== ((y * 100) | 0)
             ) {
-                camera.position.setX(camera.position.x - (camera.position.x - x) / 8);
-                camera.position.setY(camera.position.y - (camera.position.y - y) / 8);
+                camera.position.setX(camera.position.x - (camera.position.x - x) / 4);
+                camera.position.setY(camera.position.y - (camera.position.y - y) / 4);
             } else {
                 camera.position.setX(x);
                 camera.position.setY(y);
             }
+
             // apply zoom
             const prevZoom = camera.zoom;
             camera.zoom = cameraZoomLevels[zoomLevel.current];
             if (camera.zoom !== prevZoom) camera.updateProjectionMatrix();
         }
         // avoid camera position on floating screen pixels
-        const rounded = getRoundedCameraPosition(camera);
-        camera.position.setX(rounded.x);
-        camera.position.setY(rounded.y);
+        // const rounded = getRoundedCameraPosition(camera);
+        // camera.position.setX(parseFloat(rounded.x.toFixed(6)));
+        // camera.position.setY(parseFloat(rounded.y.toFixed(6)));
     });
 
     return null;

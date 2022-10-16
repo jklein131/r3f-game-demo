@@ -94,7 +94,6 @@ export default function CharacterScript({ children }: Props) {
                         offset={{ x: 0, y: characterOffsetY }}
                         onIteration={() => removeInstance()}
                     />
-                    {/* <Sound {...soundData.footstep} /> */}
                 </GameObject>
             );
         },

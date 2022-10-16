@@ -83,7 +83,9 @@ export default function Moveable({ isStatic = false }: Props) {
             }
 
             publish<WillChangePositionEvent>('will-change-position', targetPosition);
-            !isForced && publish<WillMoveEvent>('will-move', targetPosition);
+            !isForced &&
+                publish<WillMoveEvent>('will-move', targetPosition) &&
+                publishGame<WillMoveEvent>('will-move', targetPosition);
 
             const dirX = (targetPosition.x - transform.x) as Direction;
             const dirY = (targetPosition.y - transform.y) as Direction;

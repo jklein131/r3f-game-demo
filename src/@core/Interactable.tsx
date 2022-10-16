@@ -23,6 +23,11 @@ import {
     UnNotificationEvent,
 } from './Notifications';
 
+export type SpaceDoorEvent = PubSubEvent<
+    'space-door',
+    { name: string; pos: 'open' | 'close' }
+>;
+
 export type WillInteractEvent = PubSubEvent<'will-interact', Position>;
 export type WillInteractRightClickEvent = PubSubEvent<
     'will-interact-right-click',
@@ -81,8 +86,16 @@ export default function Interactable(
     const { getRef, publish, hasSubscriptions, subscribe } = useGameObject();
 
     const canInteract = useRef(true);
+    const isNotif = useRef(false);
     useEffect(() => {
-        gameLevelPublish<ReNotificationEvent>('renotification', props.message);
+        if (props.message !== undefined) {
+            gameLevelPublish<ReNotificationEvent>('renotification', props.message);
+            return () => {
+                isNotif.current = false;
+                gameLevelPublish<UnNotificationEvent>('unnotification', props.message);
+                publish<UnNotificationEvent>('unnotification', props.message);
+            };
+        }
     }, [props.message]);
 
     useComponentRegistry<InteractableRef>('Interactable', {
@@ -106,9 +119,14 @@ export default function Interactable(
         async onInteract(gameObject) {
             if (props.message !== undefined) {
                 gameLevelPublish<NotificationEvent>('notification', props.message);
+                if (isNotif.current === true) {
+                    props.message.action();
+                }
+                isNotif.current = true;
                 publish<NotificationEvent>('notification', props.message);
                 const sub = gameObject.subscribe('will-move', on => {
                     // console.log('ok');
+                    isNotif.current = false;
                     gameLevelPublish<UnNotificationEvent>(
                         'unnotification',
                         props.message
@@ -145,6 +163,7 @@ export default function Interactable(
                     'notification',
                     props.rightClickMessage
                 );
+                isNotif.current = true;
             }
             const interactables = findGameObjectsByXY(x, y)
                 .map(obj =>
@@ -170,9 +189,11 @@ export default function Interactable(
                     'notification',
                     props.rightClickMessage
                 );
+                isNotif.current = true;
                 publish<NotificationEvent>('notification', props.rightClickMessage);
                 const sub = gameObject.subscribe('will-move', on => {
                     // console.log('ok');
+                    isNotif.current = false;
                     gameLevelPublish<UnNotificationEvent>(
                         'unnotification',
                         props.rightClickMessage

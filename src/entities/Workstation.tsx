@@ -38,13 +38,12 @@ export default function Workstation(props: GameObjectProps) {
             <Interact
                 showIndicator
                 message={{
-                    title: 'This is a workstation Machine',
-                    text: "Don't hurt me",
+                    title: 'Workstation Machine',
+                    text: 'Not really sure what it says',
                     type: NotificationType.SUCCESS,
                     id: 'workstation-machine',
                     x: props.x,
                     y: props.y,
-                    action: () => {},
                 }}
             />
 

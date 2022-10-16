@@ -16,7 +16,7 @@ import createPubSub from './@core/utils/createPubSub';
 import TreeSelector from './@core/TreeSelector';
 import MiningScene from './scenes/MiningScene';
 import TestRenderer from 'react-test-renderer';
-import MiningSuccessOverlay from './components/ui/MiningSuccessOverlay';
+import ShipScene from './scenes/ShipScene';
 
 const styles = {
     root: (width: number, height: number) => css`
@@ -25,7 +25,19 @@ const styles = {
         height: ${height - (height % 2)}px;
         justify-content: center;
         align-items: center;
-        background: black;
+        background-image: url('assets/earth2.webp');
+        animation: AnimateBG 120s ease infinite;
+        @keyframes AnimateBG {
+            0% {
+                background-position: 20% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 20% 50%;
+            }
+        }
     `,
 };
 
@@ -54,9 +66,9 @@ export default function App() {
     const game = (
         <Game cameraZoom={80} pubSub={pubSub}>
             <AssetLoader urls={urls} placeholder="Loading assets ...">
-                <SceneManager defaultScene="mining">
-                    <Scene id="mining">
-                        <MiningScene />
+                <SceneManager defaultScene="ShipScene">
+                    <Scene id="ShipScene">
+                        <ShipScene />
                     </Scene>
                 </SceneManager>
             </AssetLoader>
@@ -66,7 +78,6 @@ export default function App() {
         <>
             <Global styles={globalStyles} />
             <NotificationWindow pubSub={pubSub} />
-            <MiningSuccessOverlay pubSub={pubSub}></MiningSuccessOverlay>
             <div id="swag2" css={styles.root(width, height)}>
                 {game}
             </div>

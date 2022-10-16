@@ -10,6 +10,7 @@ import React, {
     useState,
 } from 'react';
 import { ComponentRegistryUtils } from './useComponentRegistry';
+import * as THREE from 'three';
 import useForceUpdate from './useForceUpdate';
 import useGame from './useGame';
 import useGameObject from './useGameObject';
@@ -186,9 +187,9 @@ export default function GameObject({
 
     return (
         <GameObjectContext.Provider value={contextValue}>
-            {persisted && <Persistence />}
+            {persisted ? <Persistence /> : <></>}
             <group ref={node} position={[x, y, offsetZ]}>
-                {!disabled && children}
+                {!disabled ? children : <></>}
             </group>
         </GameObjectContext.Provider>
     );

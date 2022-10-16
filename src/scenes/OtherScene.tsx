@@ -35,7 +35,7 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
 
     switch (type) {
         case '·':
-            return <Fragment>{floor}</Fragment>;
+            return <Fragment key={key}>{floor}</Fragment>;
         case '#':
             return (
                 <GameObject key={key} {...position} layer="wall">
@@ -65,7 +65,7 @@ export default function OtherScene() {
         <>
             <GameObject name="map">
                 <ambientLight />
-                <TileMap data={mapData} resolver={resolveMapTile} definesMapSize />
+                <TileMap data={mapData} resolver={resolveMapTile} />
             </GameObject>
 
             <Player x={0} y={2} allowDiagonals={true} />

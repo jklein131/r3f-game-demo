@@ -51,7 +51,6 @@ export default function Tar(props: GameObjectProps) {
                     x: props.x,
                     y: props.y,
                     id: 'tar-x' + props.x.toString() + props.y.toString(),
-                    action: () => {},
                 }}
             />
             <TarScript animate={true}></TarScript>

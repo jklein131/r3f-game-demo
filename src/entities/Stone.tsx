@@ -2,7 +2,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import Collider from '../@core/Collider';
 import Interactable, { InteractableRef, InteractionEvent } from '../@core/Interactable';
 import { WillMoveEvent } from '../@core/Moveable';
-import { NotificationType } from '../@core/Notifications';
+import { NotificationEvent, NotificationType } from '../@core/Notifications';
 import { useSound } from '../@core/Sound';
 import useGame from '../@core/useGame';
 import useGameLoop from '../@core/useGameLoop';
@@ -15,6 +15,8 @@ import { AdditiveBlending, AnimationUtils, NormalBlending } from 'three';
 import GameObject, { GameObjectProps } from '../@core/GameObject';
 import Sprite, { SpriteRef } from '../@core/Sprite';
 import spriteData from '../spriteData';
+import HtmlOverlay from 'src/@core/HtmlOverlay';
+import { NFTRoll } from 'src/components/ui/MiningSuccessOverlay';
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -43,48 +45,70 @@ function RockScript() {
     subscribe<WillMoveEvent>('will-move', () => {
         mining.current = false;
         // getComponent<SpriteRef>('Sprite').setState('coffee-machine-empty');
-        playSfx();
+        // playSfx();
     });
 
     return null;
 }
 
 export default function Stone(props: GameObjectProps & { amount: number }) {
+    const { publish } = useGame();
     const [amount, setAmount] = useState(props.amount);
     const stoneState = ((props.x + props.y) % 15) + 1;
-    const isCoal = getRandomInt(0, 360) < 50;
+    const seed = useRef(getRandomInt(0, 360));
+    const isCoal = seed.current < 300;
+    const isRuby = seed.current > 300 && seed.current < 330;
     // let isCoal = false;
     let isGold = false;
-    let isRuby = false;
-    if (!isCoal) {
-        isGold = getRandomInt(0, 360) < 10;
-    }
-    if (!isGold && !isCoal) {
-        isRuby = getRandomInt(0, 360) < 50;
-    }
+    const onAfter = (isRuby: boolean) => () => {
+        if (isRuby) {
+            publish<NotificationEvent>('notification', {
+                type: NotificationType.SUCCESS,
+                title: 'Artifact found!',
+                text: 'We found something under the tar. What is it?',
+                x: props.x,
+                y: props.y,
+                id: 'nft-found' + props.x + '-' + props.y,
+                unNotifyOnMove: false,
+                action: async () => {
+                    await publish<NFTRoll>('nft-roll-ack', { dates: 'hello' });
+                    return true;
+                },
+            });
+        }
+    };
     return (
-        <GameObject {...props} layer="ground-decal">
+        <GameObject
+            key={'stonewrap' + props.x + '-' + props.y}
+            {...props}
+            layer="ground-decal"
+        >
             <RockScript></RockScript>
             <Mineable
+                onAfter={onAfter(isRuby)}
                 amount={amount}
                 setAmount={setAmount}
                 after={
                     <Fragment key={'floor' + props.x.toString() + props.y.toString()}>
-                        <Sprite {...spriteData.objects} state="floor" />
+                        <Sprite {...spriteData.buildings} state="lava" />
                     </Fragment>
                 }
             >
+                <HtmlOverlay>
+                    {isRuby ? 'T' : 'F'}
+                    {amount}
+                </HtmlOverlay>
                 <Interact
                     showIndicator={false}
-                    message={{
-                        title: 'I am a Stone',
-                        text: "I don't think I can cross this. " + amount.toString(),
-                        type: NotificationType.FAILURE,
-                        x: props.x,
-                        y: props.y,
-                        id: 'tar-x' + props.x.toString() + props.y.toString(),
-                        action: () => {},
-                    }}
+                    // message={{
+                    //     title: 'I am a Stone',
+                    //     text: "I don't think I can cross this. " + amount.toString(),
+                    //     type: NotificationType.FAILURE,
+                    //     x: props.x,
+                    //     y: props.y,
+                    //     id: 'tar-x' + props.x.toString() + props.y.toString(),
+                    //     action: () => {},
+                    // }}
                 />
                 <Sprite
                     {...spriteData.stones}

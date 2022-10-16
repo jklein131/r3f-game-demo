@@ -76,7 +76,7 @@ export default function Scene({ id, children }: Props) {
             instantiate(newElement, portalNode) {
                 const key = newElement.key == null ? Math.random() : newElement.key;
                 const instance = portalNode
-                    ? createPortal(newElement, portalNode, null)
+                    ? createPortal(newElement, portalNode)
                     : React.cloneElement(newElement, { key });
                 setInstances(current => [...current, instance as React.ReactElement]);
                 return () => {
@@ -127,10 +127,8 @@ export default function Scene({ id, children }: Props) {
         <SceneContext.Provider value={contextValue}>
             <LevelContext.Provider value={levelContextValue}>
                 <group>
-                    <group>
-                        <>{children}</>
-                        <>{instances}</>
-                    </group>
+                    <>{children}</>
+                    <>{instances}</>
                 </group>
             </LevelContext.Provider>
         </SceneContext.Provider>

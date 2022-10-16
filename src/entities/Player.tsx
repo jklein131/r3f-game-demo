@@ -61,13 +61,19 @@ export function Miner() {
 }
 export default function Player(props: GameObjectProps & { allowDiagonals: boolean }) {
     return (
-        <GameObject name="player" displayName="Player" layer="character" {...props}>
+        <GameObject
+            key={'player'}
+            name="player"
+            displayName="Player"
+            layer="character"
+            {...props}
+        >
             <Moveable />
             <Interactable />
             <Collider />
             <Miner></Miner>
             <CharacterScript>
-                <Sprite {...spriteData.player} />
+                <Sprite key={'playersprite'} {...spriteData.player} />
             </CharacterScript>
             <CameraFollowScript />
             <PlayerScript allowDiagonals={props.allowDiagonals} />

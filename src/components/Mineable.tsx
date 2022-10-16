@@ -15,6 +15,7 @@ export default function Mineable(
         amount: number;
         setAmount: Dispatch<React.SetStateAction<number>>;
         after: JSX.Element;
+        onAfter: () => void;
     }
 ) {
     // const def2 = useMemo(() => {
@@ -26,7 +27,14 @@ export default function Mineable(
     // }, [props.setAmount, def2]);
     useComponentRegistry<MineableRef>('mineable', {
         amount: props.amount,
-        mine: () => props.setAmount(props.amount - 1),
+        mine: () => {
+            if (props.amount === 1) {
+                props.setAmount(props.amount - 1);
+                props.onAfter();
+            } else {
+                props.setAmount(props.amount - 1);
+            }
+        },
     });
     if (props.amount <= 0) {
         return <Fragment>{props.after}</Fragment>;

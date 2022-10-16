@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Plantable from '../components/Plantable';
 import Collider from '../@core/Collider';
-import GameObject from '../@core/GameObject';
+import GameObject, { GameObjectContextValue } from '../@core/GameObject';
 import Interactable from '../@core/Interactable';
 import ScenePortal from '../@core/ScenePortal';
 import Sprite from '../@core/Sprite';
@@ -15,10 +15,17 @@ import Workstation from '../entities/Workstation';
 import spriteData from '../spriteData';
 import Stone from '../entities/Stone';
 import { createNoise2D } from 'simplex-noise';
+import HtmlOverlay from 'src/@core/HtmlOverlay';
+import Sally from 'src/entities/people/Sally';
+import Henry from 'src/entities/people/Henry';
+import Megan from 'src/entities/people/Megan';
+import Paul from 'src/entities/people/Paul';
+import George from 'src/entities/people/George';
+import resolveMapTile from './SceneResolver';
 
 const mapData = mapDataString(` 
 T···················································
-T···················································
+T··················································· 
 T···················································
 ············T·······································
 ····················································
@@ -36,20 +43,45 @@ T·······$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$·······
 ················$$$$$$$$$$$$$$$$$$$$$$$$$$··········
 ················$$$$$$$$$$$$$$$$$$$$$$$$$$··········
 `);
+
+const town = mapDataString3(
+    `
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | ·N| ·N| ·N| ·N| · | · | · | · | · | · |
+ · | · | · | · | · | ·N| ·N|S1 | ·N| · | · | · | · | · | · |
+ · | · | · | · | · | ·N| ·N|S6 | ·N| ·N| · | · | · | · | · |
+ · | · | · | · | · | ·P|S9 |S7 |S9 | ·N| · | · | · | · | · |
+ · | · | · | · | · | ·N|S12| ·N|S12| ·N| · | · | · | · | · |
+ · | · | · | · | · | ·N| ·N| ·N| ·N| ·N| · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | 
+`
+);
+
 const newMapData = mapDataString3(
     `
 999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|999|
- · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | P | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | · | · |014|056|069|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · | · | · | · | · | · | · | · |=R=|=R=|=R=| · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · | · | · | · | · |PM | · | · |===|=B=|===| · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · | · | · | P | · | · | · | · |===|=D=|===| · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · |///|---|???| · | · | · | · | · | · | PH| · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · |]]]|]]]|]]]| · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · | PG| · | · | · |014|056|069|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · | 
+ · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · | · |PS | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
  · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
  · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
- · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
+ · | · | · |PP | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
  · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
  · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
  · | · | · | · | · | · |014|056|200|050|050|050|050|050|050| · | · | · | · | · | · | · | · | · | · | · | · | · |
@@ -68,146 +100,36 @@ const newMapData = mapDataString3(
 `
 );
 
-const resolveMapTile: TileMapResolver = (type, x, y) => {
-    const key = `${x}-${y}`;
-    const position = { x, y };
-
-    const floor = (
-        <Fragment key={'floor' + key}>
-            <GameObject key={'fgo' + key} {...position} layer="ground">
-                <Sprite {...spriteData.objects} state="floor" />
-            </GameObject>
-        </Fragment>
-    );
-
-    switch (type) {
-        case '·':
-            return (
-                <Fragment key={key}>
-                    <Plantable {...position} />
-                    {floor}
-                </Fragment>
-            );
-        case 'X':
-            return floor;
-        case '$':
-            return (
-                <Fragment key={key}>
-                    <Stone {...position} amount={50}></Stone>
-                    {floor}
-                </Fragment>
-            );
-        case '^':
-            return (
-                <Fragment key={key}>
-                    {floor}
-                    <CoffeeMachine {...position} />
-                </Fragment>
-            );
-        case 'o':
-            return (
-                <Fragment key={key}>
-                    {floor}
-                    <PizzaPickup {...position} />
-                </Fragment>
-            );
-        case '#':
-            return (
-                <GameObject key={key} {...position} layer="wall">
-                    <Collider />
-                    <Sprite {...spriteData.objects} state="wall" />
-                </GameObject>
-            );
-        case 'M':
-            return (
-                <GameObject key={key} x={x} y={y}>
-                    <Collider />
-                    <Interactable />
-                    <ScenePortal
-                        name="exit"
-                        enterDirection={[-1, 0]}
-                        target="other/start"
-                    />
-                </GameObject>
-            );
-        case 'W':
-            return (
-                <Fragment key={key}>
-                    {floor}
-                    <Workstation {...position} />
-                </Fragment>
-            );
-        case 'C':
-            return (
-                <Fragment key={key}>
-                    {floor}
-                    <CoffeeMachine {...position} />
-                </Fragment>
-            );
-        case 'T':
-            return (
-                <Fragment key={key}>
-                    {floor}
-                    <Plant {...position} />
-                </Fragment>
-            );
-        case 'P':
-            return (
-                <Fragment key={key}>
-                    {floor}
-                    <Player x={x} y={y} allowDiagonals={false} />;
-                </Fragment>
-            );
-
-        default:
-            const rockAmount = parseInt(type as string);
-            return (
-                <Fragment key={key}>
-                    <Stone {...position} amount={rockAmount}></Stone>
-                    {floor}
-                </Fragment>
-            );
-        // return null;
-    }
-};
-
 export default function MiningScene() {
     // console.log('map', newMapData);
     // console.log('old', mapData);
+
     // initialize the noise function
     const noise2D = createNoise2D(Math.random);
 
-    const [map, setMap] = useState<undefined | TileMapData>(newMapData);
-
-    useEffect(() => {
-        let data: TileMapData = [];
-        //generate map
-        for (let x = 0; x < 10; x++) {
-            data[x] = [];
-            for (let y = 0; y < 10; y++) {
-                const r = noise2D(x / 4, y / 4) * 500;
-                // const r2 = noise2D(x / 8, y / 8) * 500;
-                if (r < -100) {
-                    data[x][y] = '·';
-                } else {
-                    data[x][y] = Math.abs(r).toFixed(0);
-                }
+    let data: TileMapData = town.slice();
+    //generate map
+    for (let x = 0; x < data.length; x++) {
+        for (let y = 0; y < data[0].length; y++) {
+            const r = noise2D(x / 4, y / 4) * 1000;
+            console.log(x, y, data[x][y]);
+            // const r2 = noise2D(x / 8, y / 8) * 500;
+            if (data[x][y] === '·') {
+                data[x][y] = Math.abs(r).toFixed(0);
+                continue;
             }
         }
-        data[0][0] = 'P';
-        setMap(data);
-        console.log('set map', data);
-    }, []);
+    }
+    // data[0][0] = 'P';
 
-    return (
-        <>
-            {map !== undefined ? (
-                <GameObject name="map">
-                    <TileMap data={map} resolver={resolveMapTile} definesMapSize />
-                </GameObject>
-            ) : (
-                <></>
-            )}
-        </>
+    console.log('set map', town);
+    console.log('town', town[0].length, town.length);
+
+    return data !== undefined ? (
+        <GameObject name="map">
+            <TileMap data={data} resolver={resolveMapTile} />
+        </GameObject>
+    ) : (
+        <Fragment></Fragment>
     );
 }

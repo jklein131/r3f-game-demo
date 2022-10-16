@@ -59,11 +59,13 @@ export default function PlayerPathOverlay({
     ) {
         isPlantable = true;
     }
+
+    const graphic2 = <Graphic {...spriteData.ui} state="dot" opacity={0.25} />;
     if (pathVisible) {
         renderedPath = path.length
             ? path.map(({ x, y }, index) => (
                   // eslint-disable-next-line react/jsx-indent
-                  <group key={`${x}-${y}`} position={[x, y, offsetZ]}>
+                  <group key={`pp-${x}-${y}`} position={[x, y, offsetZ]}>
                       <Graphic
                           {...spriteData.ui}
                           state="dot"
@@ -73,8 +75,8 @@ export default function PlayerPathOverlay({
               ))
             : pointerPath.map(({ x, y }) => (
                   // eslint-disable-next-line react/jsx-indent
-                  <group key={`${x}-${y}`} position={[x, y, offsetZ]}>
-                      <Graphic {...spriteData.ui} state="dot" opacity={0.25} />
+                  <group key={`pp2-${x}-${y}`} position={[x, y, offsetZ]}>
+                      {graphic2}
                   </group>
               ));
     }
@@ -94,7 +96,7 @@ export default function PlayerPathOverlay({
                             opacity={pathVisible ? 1 : 0.5}
                         />
                     </group>
-                    {isPlantable && path.length > 0 && (
+                    {isPlantable && path.length > 0 ? (
                         <group
                             key="mainpo-p-path"
                             position={[
@@ -106,6 +108,8 @@ export default function PlayerPathOverlay({
                             <Plant />
                             {/* This should be replaced by a tree outline. */}
                         </group>
+                    ) : (
+                        <></>
                     )}
                 </>,
                 nodeRef.current.parent

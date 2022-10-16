@@ -3,6 +3,9 @@ import { Position } from './GameObject';
 import Graphic, { GraphicProps } from './Graphic';
 import useComponentRegistry, { ComponentRef } from './useComponentRegistry';
 import * as THREE from 'three';
+import { extname } from 'node:path/win32';
+import useAsset from './useAsset';
+import { useTexture } from '@react-three/drei';
 
 export type SpriteRef = ComponentRef<
     'Sprite',
@@ -52,6 +55,14 @@ export default function Sprite({
 
     return (
         <Graphic
+            key={
+                'graphic-' +
+                name +
+                '/' +
+                (graphicProps.x ?? 0) +
+                '-' +
+                (graphicProps.y ?? 0)
+            }
             ref={nodeRef}
             sheet={sheet}
             state={state}

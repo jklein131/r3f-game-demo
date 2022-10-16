@@ -5,12 +5,10 @@ import { ChevronDownIcon } from '@heroicons/react/solid';
 import {
     ChartBarIcon,
     CheckCircleIcon,
-    CursorClickIcon,
     PhoneIcon,
     PlayIcon,
     ShieldCheckIcon,
-    ViewGridIcon,
-} from '@heroicons/react/outline';
+} from '@heroicons/react/24/outline';
 
 const solutions = [
     {
@@ -23,7 +21,7 @@ const solutions = [
         name: 'Spruce',
         description: 'Speak directly to your customers in a more meaningful way.',
         href: '#',
-        icon: CursorClickIcon,
+        icon: PlayIcon,
     },
     {
         name: 'Oak',

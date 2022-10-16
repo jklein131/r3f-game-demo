@@ -42,7 +42,6 @@ export default function CoffeeMachine(props: GameObjectProps) {
                     x: props.x,
                     y: props.y,
                     id: 'coffee-machine',
-                    action: () => {},
                 }}
             />
             <CoffeeScript />

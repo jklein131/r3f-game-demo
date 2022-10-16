@@ -25,7 +25,7 @@ export function InteractScriptRightClick({ fnc }: { fnc: () => void }) {
     useGameObjectEvent<InteractionRightClickEvent>('interaction-right-click', () => {
         playSfx();
         fnc();
-        return waitForMs(400);
+        return waitForMs(100);
     });
 
     return null;

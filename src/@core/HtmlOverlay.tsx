@@ -18,7 +18,13 @@ export default function HtmlOverlay({ children, ...props }: any) {
     if (paused) return null;
 
     return (
-        <Html ref={node} zIndexRange={[1, 9]} eps={0} {...props}>
+        <Html
+            style={{ pointerEvents: 'none' }}
+            ref={node}
+            zIndexRange={[1, 9]}
+            eps={0.2}
+            {...props}
+        >
             {children}
         </Html>
     );
