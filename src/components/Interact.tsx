@@ -44,11 +44,10 @@ export function InteractScript({ animate }: { animate: boolean }) {
 
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { CheckIcon } from '@heroicons/react/24/outline';
-import Message from './Message';
-import { Html } from '@react-three/drei';
-import useAsset from 'src/@core/useAsset';
-import SpriteHtml from 'src/@core/SpriteHtml';
+// import { CheckIcon } from '@heroicons/react/24/outline';
+// import Message from './Message';
+// import { Html } from '@react-three/drei';
+// import SpriteHtml from 'src/@core/SpriteHtml';
 
 export function ConversationModal({
     open,
