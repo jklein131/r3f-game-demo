@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "build",
-    "baseUrl": "/Users/joshuaklein/go/src/github.com/jklein131/r3f-game-demo",
+    "baseUrl": ".",
     "sourceMap": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
