@@ -1,8 +1,9 @@
+import React from 'react';
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import createPubSub, { PubSubEvent } from 'src/@core/utils/createPubSub';
+import createPubSub, { PubSubEvent } from '../../@core/utils/createPubSub';
 
 type RollEventDetails = {
     dates: String;
